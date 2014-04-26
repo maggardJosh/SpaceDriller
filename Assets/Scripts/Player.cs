@@ -6,10 +6,21 @@ using UnityEngine;
 
 public class Player : BaseGameObject
 {
+    public enum AnimState
+    {
+        IDLE,
+        RUN,
+        JUMP,
+        FALL
+    }
+
+    AnimState currentAnimState = AnimState.IDLE;
+
     public World world;
 
-    private FSprite sprite;
+    private FAnimatedSprite sprite;
 
+    bool isFacingLeft = false;
     float speed = 200.0f;
     float yVel = 0;
     float gravity = -20;
@@ -18,7 +29,16 @@ public class Player : BaseGameObject
 
     public Player()
     {
-        sprite = new FSprite("character");
+        sprite = new FAnimatedSprite("character");
+        sprite.addAnimation(new FAnimation("leftIDLE", new int[] { 1, 2 }, 100, true));
+        sprite.addAnimation(new FAnimation("rightIDLE", new int[] { 1, 2 }, 100, true));
+        sprite.addAnimation(new FAnimation("leftRUN", new int[] { 3, 4 }, 100, true));
+        sprite.addAnimation(new FAnimation("rightRUN", new int[] { 5, 6 }, 100, true));
+        sprite.addAnimation(new FAnimation("leftJUMP", new int[] { 7, 8 }, 100, true));
+        sprite.addAnimation(new FAnimation("rightJUMP", new int[] { 7, 8 }, 100, true));
+        sprite.addAnimation(new FAnimation("leftFALL", new int[] { 9, 10 }, 100, true));
+        sprite.addAnimation(new FAnimation("rightFALL", new int[] { 9, 10 }, 100, true));
+        sprite.play("leftIDLE");
         this.AddChild(sprite);
     }
 
@@ -37,23 +57,43 @@ public class Player : BaseGameObject
         if (Input.GetKeyDown(KeyCode.Space))            //Space has been pressed. Start jumping
         {
             if (grounded)
+            {
                 yVel = jumpForce;
+                //State to jump
+            }
         }
         else if (!Input.GetKey(KeyCode.Space))       //Space is not held down... Let the player stop jumping if currently jumping
         {
             if (yVel > 0)
                 yVel *= .4f;
         }
-        this.grounded = false;
+        if (yVel > 0)
+            currentAnimState = AnimState.JUMP;
+        else
+            if (yVel < 0 && !grounded)
+                currentAnimState = AnimState.FALL;
         yVel = Mathf.Clamp(yVel, -6, jumpForce);
         yMove = yVel;
         if (Input.GetKey(KeyCode.A))
+        {
             xMove = -Time.deltaTime * speed;
+            isFacingLeft = true;
+        }
         else
             if (Input.GetKey(KeyCode.D))
+            {
                 xMove = Time.deltaTime * speed;
+                isFacingLeft = false;
+            }
 
+
+        this.grounded = false;
         tryMove(xMove, yMove);
+
+        if (currentAnimState == AnimState.IDLE && xMove != 0)
+            currentAnimState = AnimState.RUN;
+
+        sprite.play((isFacingLeft ? "left" : "right") + currentAnimState);
     }
 
 
@@ -64,8 +104,6 @@ public class Player : BaseGameObject
             checkRight(xMove);
         else if (xMove < 0)
             checkLeft(-xMove);
-
-
 
         if (yMove > 0)
             checkUp(yMove);
@@ -154,6 +192,7 @@ public class Player : BaseGameObject
                 this.y = -(newTileY) * world.map.tileHeight + world.map.tileHeight / 2;
                 this.grounded = true;
                 this.yVel = 0;
+                currentAnimState = AnimState.IDLE;
                 break;
             }
         }

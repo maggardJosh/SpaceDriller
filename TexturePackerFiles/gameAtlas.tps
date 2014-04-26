@@ -177,10 +177,10 @@
         </struct>
         <key>fileList</key>
         <array>
-            <filename>character.png</filename>
             <filename>white.png</filename>
             <filename>tilemap</filename>
             <filename>pressStart2P_0.png</filename>
+            <filename>tempPlayer</filename>
         </array>
         <key>ignoreFileList</key>
         <array/>

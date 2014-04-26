@@ -11,7 +11,8 @@ public class Player : BaseGameObject
         IDLE,
         RUN,
         JUMP,
-        FALL
+        FALL,
+        FALL_ATTACK_DOWN
     }
 
     AnimState currentAnimState = AnimState.IDLE;
@@ -37,19 +38,21 @@ public class Player : BaseGameObject
         sprite.addAnimation(new FAnimation("leftIDLE", new int[] { 16 }, animSpeed, true));
         sprite.addAnimation(new FAnimation("rightIDLE", new int[] { 15 }, animSpeed, true));
         sprite.addAnimation(new FAnimation("leftRUN", new int[] { 5, 6, 7, 8 }, animSpeed, true));
-        sprite.addAnimation(new FAnimation("rightRUN", new int[] { 1,2,3,4 }, animSpeed, true));
+        sprite.addAnimation(new FAnimation("rightRUN", new int[] { 1, 2, 3, 4 }, animSpeed, true));
         sprite.addAnimation(new FAnimation("leftJUMP", new int[] { 11 }, animSpeed, true));
         sprite.addAnimation(new FAnimation("rightJUMP", new int[] { 9 }, animSpeed, true));
         sprite.addAnimation(new FAnimation("leftFALL", new int[] { 12 }, animSpeed, true));
         sprite.addAnimation(new FAnimation("rightFALL", new int[] { 10 }, animSpeed, true));
+        sprite.addAnimation(new FAnimation("leftFALL_ATTACK_DOWN", new int[] { 14 }, animSpeed, true));
+        sprite.addAnimation(new FAnimation("rightFALL_ATTACK_DOWN", new int[] { 13 }, animSpeed, true));
         sprite.play("leftIDLE");
         this.AddChild(sprite);
 
         attackSprite = new FAnimatedSprite("playerAttack");
         attackSprite.addAnimation(new FAnimation("right", new int[] { 1, 2, 3, 4 }, animSpeed, true));
         attackSprite.addAnimation(new FAnimation("left", new int[] { 5, 6, 7, 8 }, animSpeed, true));
-        attackSprite.addAnimation(new FAnimation("down", new int[] {9,10,11,12 }, animSpeed, true));
-        attackSprite.addAnimation(new FAnimation("up", new int[] { 13,14,15,16 }, animSpeed, true));
+        attackSprite.addAnimation(new FAnimation("down", new int[] { 9, 10, 11, 12 }, animSpeed, true));
+        attackSprite.addAnimation(new FAnimation("up", new int[] { 13, 14, 15, 16 }, animSpeed, true));
         this.AddChild(attackSprite);
         attackSprite.alpha = 0;
 
@@ -84,7 +87,11 @@ public class Player : BaseGameObject
             currentAnimState = AnimState.JUMP;
         else
             if (yVel < 0 && !grounded)
+            {
                 currentAnimState = AnimState.FALL;
+                if (Input.GetKey(KeyCode.S))
+                        currentAnimState = AnimState.FALL_ATTACK_DOWN;
+            }
         yVel = Mathf.Clamp(yVel, -6, jumpForce);
         yMove = yVel;
         if (Input.GetKey(KeyCode.A))
@@ -99,13 +106,20 @@ public class Player : BaseGameObject
                 isFacingLeft = false;
             }
 
+     
+
         if (Input.GetKeyDown(KeyCode.U))
             isAttacking = !isAttacking;
 
-        if (isFacingLeft)
-            attackSprite.play("left");
+        if (currentAnimState == AnimState.FALL_ATTACK_DOWN)
+            attackSprite.play("down");
         else
-            attackSprite.play("right");
+        {
+            if (isFacingLeft)
+                attackSprite.play("left");
+            else
+                attackSprite.play("right");
+        }
         attackSprite.alpha = isAttacking ? 1 : 0;
 
         this.grounded = false;
@@ -170,7 +184,7 @@ public class Player : BaseGameObject
             if (world.collision.getFrameNum(newTileX, topTileY) != 0 ||
                 world.collision.getFrameNum(newTileX, bottomTileY) != 0)
             {
-                this.x = (newTileX + 1) * world.map.tileWidth + world.map.tileWidth/ 2;
+                this.x = (newTileX + 1) * world.map.tileWidth + world.map.tileWidth / 2;
                 break;
             }
         }

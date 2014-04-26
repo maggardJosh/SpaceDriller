@@ -16,6 +16,9 @@ public class FTmxMap : FContainer {
 
     public int width = 0;
     public int height = 0;
+
+    public int tileWidth;
+    public int tileHeight;
     
 
 	public FTmxMap ()
@@ -43,8 +46,8 @@ public class FTmxMap : FContainer {
 
         int tilesWide = int.Parse(rootNode.attributes["width"]);
         int tilesHigh = int.Parse(rootNode.attributes["height"]);
-        int tileWidth = int.Parse(rootNode.attributes["tilewidth"]);
-        int tileHeight = int.Parse(rootNode.attributes["tileheight"]);
+        tileWidth = int.Parse(rootNode.attributes["tilewidth"]);
+        tileHeight = int.Parse(rootNode.attributes["tileheight"]);
         
         this.width = tilesWide * tileWidth;
         this.height = tilesHigh * tileHeight;

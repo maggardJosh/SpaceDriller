@@ -11,10 +11,13 @@ public class GameScript : MonoBehaviour {
         fparams.backgroundColor = Color.black;
         fparams.origin = new Vector2(.5f, .5f);
         Futile.instance.Init(fparams);
-
+        
         Futile.atlasManager.LoadAtlas("Atlases/gameAtlas");
 
-        Futile.stage.AddChild(new Player());
+        Futile.atlasManager.LoadFont(C.NormalFont, "pressStart2P_0", "Atlases/pressStart2P", 0,0);
+
+        FPageManager.getInstance();
+
 	}
 	
 	// Update is called once per frame

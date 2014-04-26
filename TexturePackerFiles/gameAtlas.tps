@@ -4,7 +4,9 @@
         <key>fileFormatVersion</key>
         <int>3</int>
         <key>texturePackerVersion</key>
-        <string>3.2.1</string>
+        <string>3.3.3</string>
+        <key>fileName</key>
+        <string>C:/Users/Josh/Documents/git/LD29/TexturePackerFiles/gameAtlas.tps</string>
         <key>autoSDSettings</key>
         <array>
             <struct type="AutoSDSettings">
@@ -59,6 +61,8 @@
         <uint>80</uint>
         <key>pngOptimizationLevel</key>
         <uint>0</uint>
+        <key>webpQualityLevel</key>
+        <uint>101</uint>
         <key>textureSubPath</key>
         <string></string>
         <key>textureFormat</key>
@@ -168,10 +172,15 @@
             <enum type="SpriteSettings::TrimMode">Trim</enum>
             <key>heuristicMask</key>
             <false/>
+            <key>pivotPoint</key>
+            <enum type="SpriteSettings::PivotPoint">Center</enum>
         </struct>
         <key>fileList</key>
         <array>
             <filename>character.png</filename>
+            <filename>white.png</filename>
+            <filename>tilemap</filename>
+            <filename>pressStart2P_0.png</filename>
         </array>
         <key>ignoreFileList</key>
         <array/>

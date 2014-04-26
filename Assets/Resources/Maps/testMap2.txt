@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <map version="1.0" orientation="orthogonal" width="30" height="20" tilewidth="32" tileheight="32">
+ <properties>
+  <property name="MapName" value="Seeeecret!!"/>
+ </properties>
  <tileset firstgid="1" name="tilemap" tilewidth="32" tileheight="32">
   <image source="gfx/tileset.png" width="192" height="160"/>
  </tileset>
@@ -57,7 +60,7 @@
 23,26,21,28,28,21,22,25,19,26,28,19,19,27,22,21,25,28,21,25,20,23,21,19,28,20,25,22,21,21
 </data>
  </layer>
- <layer name="Collision" width="30" height="20" visible="0" opacity="0.24">
+ <layer name="Collision" width="30" height="20" opacity="0.24">
   <properties>
    <property name="draw" value="false"/>
   </properties>

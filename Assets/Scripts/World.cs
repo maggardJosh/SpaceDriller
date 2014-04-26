@@ -17,6 +17,8 @@ public class World : FContainer
     FContainer foregroundLayer;
 
     FSprite whiteOverlaySprite;
+    FLabel mapNameLabel;
+
     public World()
         : base()
     {
@@ -27,6 +29,9 @@ public class World : FContainer
         whiteOverlaySprite.color = Color.black;
         whiteOverlaySprite.width = Futile.screen.width;
         whiteOverlaySprite.height = Futile.screen.height;
+
+        mapNameLabel = new FLabel(C.NormalFont, "");
+        mapNameLabel.y = -Futile.screen.halfHeight + 40;
 
     }
 
@@ -66,6 +71,7 @@ public class World : FContainer
         this.AddChild(backgroundLayer);
         this.AddChild(playerLayer);
         this.AddChild(fg);
+        camera.AddChild(mapNameLabel);
         camera.AddChild(whiteOverlaySprite);
         camera.MoveToFront();
 
@@ -84,7 +90,10 @@ public class World : FContainer
                     this.RemoveAllChildren();
                     loadMap(door.toMap);
                     spawnPlayer(p, door.toDoor);
-                    Go.to(whiteOverlaySprite, C.transitioningTime, new TweenConfig().floatProp("alpha", 0).setEaseType(EaseType.QuadIn).onComplete((AbstractTween t2) => { C.transitioning = false; }));
+                    mapNameLabel.alpha = 1;
+                    Go.killAllTweensWithTarget(mapNameLabel);
+                    mapNameLabel.text = map.mapName;
+                    Go.to(whiteOverlaySprite, C.transitioningTime, new TweenConfig().floatProp("alpha", 0).setEaseType(EaseType.QuadIn).onComplete((AbstractTween t2) => { C.transitioning = false; Go.to(mapNameLabel, 2.0f, new TweenConfig().floatProp("alpha", 0).setDelay(1.0f).setEaseType(EaseType.QuadIn)); }));
                 }));
                 break;
             }
@@ -117,11 +126,18 @@ public class World : FContainer
 
     public void spawnPlayer(Player p)
     {
+        C.transitioning = true;
         C.getCameraInstance().follow(p);
         playerLayer.AddChild(p);
         if (spawnPoints.Count > 0)
             p.SetPosition(spawnPoints[RXRandom.Int(spawnPoints.Count)]);
         p.setWorld(this);
+        whiteOverlaySprite.alpha = 1;
+        mapNameLabel.alpha = 1;
+        Go.killAllTweensWithTarget(mapNameLabel);
+        mapNameLabel.text = map.mapName;
+        C.getCameraInstance().MoveToFront();
+        Go.to(whiteOverlaySprite, 1, new TweenConfig().floatProp("alpha", 0).setEaseType(EaseType.QuadIn).onComplete((AbstractTween t2) => { C.transitioning = false; Go.to(mapNameLabel, 2.0f, new TweenConfig().floatProp("alpha", 0).setDelay(1.0f).setEaseType(EaseType.QuadIn)); }));
     }
 
     public void spawnPlayer(Player p, String toDoor)

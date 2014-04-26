@@ -12,9 +12,9 @@ public class InGamePage : FPage
     public InGamePage()
     {
         world = new World();
+        Futile.stage.AddChild(world);
         world.loadMap("testMap");
         world.spawnPlayer(new Player());
-        Futile.stage.AddChild(world);
     }
 
 }

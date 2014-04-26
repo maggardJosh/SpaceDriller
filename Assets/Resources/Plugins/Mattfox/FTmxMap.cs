@@ -20,7 +20,7 @@ public class FTmxMap : FContainer {
 
     public int tileWidth;
     public int tileHeight;
-    
+    public string mapName;
 
 	public FTmxMap ()
 	{
@@ -46,6 +46,8 @@ public class FTmxMap : FContainer {
 		XMLNode rootNode = xmlNode.children[0] as XMLNode;
         int firstgid = 0;
 
+
+
         int tilesWide = int.Parse(rootNode.attributes["width"]);
         int tilesHigh = int.Parse(rootNode.attributes["height"]);
         tileWidth = int.Parse(rootNode.attributes["tilewidth"]);
@@ -55,7 +57,15 @@ public class FTmxMap : FContainer {
         this.height = tilesHigh * tileHeight;
 		// loop through all children
 		foreach (XMLNode child in rootNode.children) {
-			
+
+            if (child.tagName == "properties")
+            {
+                foreach (XMLNode property in child.children)
+                {
+                    if (property.attributes["name"].ToLower().CompareTo("mapname") == 0)
+                        this.mapName = property.attributes["value"];
+                }
+            }
 			// save references to tilesets
 			if (child.tagName == "tileset") {
 				_tilesets.Add(child);

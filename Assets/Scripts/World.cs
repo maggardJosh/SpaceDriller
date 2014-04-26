@@ -6,11 +6,13 @@ using UnityEngine;
 
 public class World : FContainer
 {
-    FTmxMap map;
-    FTilemap collision;
+    public FTmxMap map;
+    public FTilemap collision;
 
     List<Vector2> spawnPoints = new List<Vector2>();
+    FContainer backgroundLayer;
     FContainer playerLayer;
+    FContainer foregroundLayer;
 
     public World()
         : base()
@@ -20,7 +22,10 @@ public class World : FContainer
 
     public void loadMap(string mapName)
     {
+        backgroundLayer = new FContainer();
         playerLayer = new FContainer();
+        foregroundLayer = new FContainer();
+
         map = new FTmxMap();
         FCamObject camera = C.getCameraInstance();
         map.clipNode = camera;
@@ -39,8 +44,14 @@ public class World : FContainer
                 }
             }
 
-        this.AddChild(map);
+        FTilemap fg = (FTilemap)map.getLayerNamed("FG");
+        map.RemoveChild(fg);
+
+        backgroundLayer.AddChild(map);
+
+        this.AddChild(backgroundLayer);
         this.AddChild(playerLayer);
+        this.AddChild(fg);
 
     }
 
@@ -50,6 +61,7 @@ public class World : FContainer
         playerLayer.AddChild(p);
         if (spawnPoints.Count > 0)
             p.SetPosition(spawnPoints[RXRandom.Int(spawnPoints.Count)]);
+        p.setWorld(this);
     }
 }
 

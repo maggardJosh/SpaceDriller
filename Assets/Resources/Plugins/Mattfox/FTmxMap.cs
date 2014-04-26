@@ -7,6 +7,7 @@ public class FTmxMap : FContainer {
 	
 	private List<XMLNode> _tilesets;
 	protected List<string> _layerNames;
+    public List<XMLNode> objects;
 	
 	public List<FTilemap> tilemaps;
 	private FNode _clipNode; // for tilemaps
@@ -26,6 +27,7 @@ public class FTmxMap : FContainer {
 		tilemaps = new List<FTilemap>();
 		_tilesets = new List<XMLNode>();
 		_layerNames = new List<string>();
+        objects = new List<XMLNode>();
 	}
 	public void LoadTMX(string fileName) 
 	{
@@ -164,7 +166,9 @@ public class FTmxMap : FContainer {
 		
 		foreach (XMLNode fObject in node.children) {
 			if (fObject.tagName == "object") {
-				if (fObject.attributes.ContainsKey("gid")) {
+                objects.Add(fObject);
+				/*
+                if (fObject.attributes.ContainsKey("gid")) {
 					// create FSprite (override that function for specific class changes)
 					objectGroup.AddChild(this.createTileObject(fObject));
 				} else {
@@ -173,6 +177,11 @@ public class FTmxMap : FContainer {
 						objectGroup.AddChild(newObject);
 					}
 				}
+                 * 
+                 * 
+                 * Took this out since I handle objects on my own
+                 * 
+                 */
 			}
 		}
 		

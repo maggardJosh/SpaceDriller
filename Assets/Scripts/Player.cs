@@ -38,14 +38,14 @@ public class Player : BaseGameObject
 
     public Player()
     {
-        sparkParticleSystem = new FParticleSystem(30);
+        sparkParticleSystem = new FParticleSystem(60);
         sparkParticleDefinition = new FParticleDefinition(C.whiteElement);
         sparkParticleDefinition.startColor = Color.yellow;
         sparkParticleDefinition.startScale = .05f;
         sparkParticleDefinition.endScale = 0;
         sparkParticleDefinition.endColor = new Color(0, 0, 0, 0);
-        sparkParticleSystem.shouldNewParticlesOverwriteExistingParticles = false;
-        sparkParticleSystem.accelY = -60;
+        sparkParticleSystem.shouldNewParticlesOverwriteExistingParticles = true;
+        sparkParticleSystem.accelY = -300;
 
         sprite = new FAnimatedSprite("player");
         sprite.addAnimation(new FAnimation("leftIDLE", new int[] { 16 }, animSpeed, true));
@@ -60,15 +60,15 @@ public class Player : BaseGameObject
         sprite.addAnimation(new FAnimation("rightFALL_ATTACK_DOWN", new int[] { 13 }, animSpeed, true));
         sprite.play("leftIDLE");
         this.AddChild(sprite);
+        this.AddChild(sparkParticleSystem);
 
         attackSprite = new FAnimatedSprite("playerAttack");
         attackSprite.addAnimation(new FAnimation("right", new int[] { 1, 2, 3, 4 }, animSpeed, true));
         attackSprite.addAnimation(new FAnimation("left", new int[] { 5, 6, 7, 8 }, animSpeed, true));
         attackSprite.addAnimation(new FAnimation("down", new int[] { 9, 10, 11, 12 }, animSpeed, true));
         attackSprite.addAnimation(new FAnimation("up", new int[] { 13, 14, 15, 16 }, animSpeed, true));
-        this.AddChild(attackSprite);
+        //this.AddChild(attackSprite);
         attackSprite.alpha = 0;
-        Futile.stage.AddChild(sparkParticleSystem);
 
     }
 
@@ -147,15 +147,32 @@ public class Player : BaseGameObject
             currentAnimState = AnimState.RUN;
 
         sprite.play((isFacingLeft ? "left" : "right") + currentAnimState);
+
+        sparkParticleSystem.x = -x;
+        sparkParticleSystem.y = -y;
     }
 
     private void spawnSparks()
     {
+        if (RXRandom.Float()< .6f)
+            return;
         sparkParticleDefinition.x = this.x;
-        sparkParticleDefinition.y = this.y;
-        sparkParticleDefinition.speedX = RXRandom.Float(100.0f) ;
-        sparkParticleDefinition.lifetime = 1;
-        sparkParticleDefinition.speedY = RXRandom.Float(100.0f);
+        sparkParticleDefinition.y = this.y - 10;
+
+        if (isFacingLeft)
+            sparkParticleDefinition.x -= 15;
+        else
+            sparkParticleDefinition.x += 15;
+        float randomPosDist = 10;
+        sparkParticleDefinition.x += RXRandom.Float() * randomPosDist - randomPosDist / 2;
+        sparkParticleDefinition.y += RXRandom.Float() * randomPosDist - randomPosDist / 2;
+
+        float angle = (3/2.0f) * Mathf.PI + RXRandom.Float(Mathf.PI);
+        sparkParticleDefinition.speedX = Mathf.Cos(angle) * (50 + 50 * RXRandom.Float());
+        sparkParticleDefinition.speedY = Mathf.Sin(angle) * (50 + 50 * RXRandom.Float());
+
+        if (isFacingLeft)
+            sparkParticleDefinition.speedX *= -1;
         sparkParticleSystem.AddParticle(sparkParticleDefinition);
     }
 

@@ -84,8 +84,7 @@ public class FCamObject : FContainer {
 				y = _followObject.y;
 			}
 		}
-		
-		
+
 		// keep within world bounds
 		if (_worldBounds.width > 0) {
 			if (Futile.screen.width > _worldBounds.width) {

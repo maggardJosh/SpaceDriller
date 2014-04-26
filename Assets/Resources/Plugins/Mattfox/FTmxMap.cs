@@ -14,6 +14,8 @@ public class FTmxMap : FContainer {
 	public int objectStartInt = 1;
     public int objectLayerStartGID = 0;
 
+    public int width = 0;
+    public int height = 0;
     
 
 	public FTmxMap ()
@@ -38,7 +40,14 @@ public class FTmxMap : FContainer {
 		XMLNode xmlNode = parser.read(fileContents);
 		XMLNode rootNode = xmlNode.children[0] as XMLNode;
         int firstgid = 0;
-		
+
+        int tilesWide = int.Parse(rootNode.attributes["width"]);
+        int tilesHigh = int.Parse(rootNode.attributes["height"]);
+        int tileWidth = int.Parse(rootNode.attributes["tilewidth"]);
+        int tileHeight = int.Parse(rootNode.attributes["tileheight"]);
+        
+        this.width = tilesWide * tileWidth;
+        this.height = tilesHigh * tileHeight;
 		// loop through all children
 		foreach (XMLNode child in rootNode.children) {
 			

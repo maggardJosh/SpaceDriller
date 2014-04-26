@@ -7,6 +7,7 @@ public static class C
 {
     public const string whiteElement = "white";
     public const string NormalFont = "PressStart2P";
+    public const float disableMovementTime = .5f;
 
     private static FCamObject camera;
     public static FCamObject getCameraInstance()

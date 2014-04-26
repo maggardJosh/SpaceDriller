@@ -36,5 +36,6 @@ public class Door
     {
         playerHasLeft = false;
         p.SetPosition(bounds.x + bounds.width / 2, bounds.y + bounds.width / 2);
+        p.disableMovement(C.disableMovementTime);
     }
 }

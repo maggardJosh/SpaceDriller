@@ -12,6 +12,10 @@ public class Player : FSprite
     float gravity = -20;
     bool grounded = false;
     float jumpForce = 7;
+
+    float disabledTimeLeft = 0;
+    bool disabled = false;
+
     public Player()
         : base("character")
     {
@@ -60,80 +64,120 @@ public class Player : FSprite
         tryMove(xMove, yMove);
     }
 
+    public void disableMovement(float time)
+    {
+        this.disabledTimeLeft = time;
+        this.disabled = false;              //Set to false so we know when to start the countdown.
+    }
+
     private void tryMove(float xMove, float yMove)
     {
+        if (disabledTimeLeft > 0)
+        {
+            if (!disabled)
+                disabled = true;
+            else
+                disabledTimeLeft -= UnityEngine.Time.deltaTime;
 
+            return;     //Disabled don't move
+        }
 
-        this.x += xMove;
         if (xMove > 0)
-            checkRight();
+            checkRight(xMove);
         else if (xMove < 0)
-            checkLeft();
+            checkLeft(-xMove);
 
 
-        this.y += yMove;
+       
         if (yMove > 0)
-            checkUp();
+            checkUp(yMove);
         else if (yMove < 0)
-            checkDown();
+            checkDown(-yMove);
 
         world.checkDoor(this);
 
     }
 
-    private void checkRight()
+    private void checkRight(float xMove)
     {
-        int topTileY = -Mathf.CeilToInt((this.y + world.map.tileHeight / 2.1f) / world.map.tileHeight);
-        int bottomTileY = -Mathf.CeilToInt((this.y - world.map.tileHeight / 2.1f) / world.map.tileHeight);
-        int newTileX = Mathf.FloorToInt((this.x + world.map.tileWidth / 2) / world.map.tileWidth);
-
-        if (world.collision.getFrameNum(newTileX, topTileY) != 0 ||
-            world.collision.getFrameNum(newTileX, bottomTileY) != 0)
+        while (xMove > 0)
         {
-            this.x = newTileX * world.map.tileWidth - world.map.tileWidth / 2.0f;
-        }
+            this.x += Mathf.Min(xMove, world.map.tileWidth-1);
+            xMove -= Mathf.Min(xMove, world.map.tileWidth-1);
 
+            int topTileY = -Mathf.CeilToInt((this.y + world.map.tileHeight / 2.1f) / world.map.tileHeight);
+            int bottomTileY = -Mathf.CeilToInt((this.y - world.map.tileHeight / 2.1f) / world.map.tileHeight);
+            int newTileX = Mathf.FloorToInt((this.x + world.map.tileWidth / 2) / world.map.tileWidth);
+
+            if (world.collision.getFrameNum(newTileX, topTileY) != 0 ||
+                world.collision.getFrameNum(newTileX, bottomTileY) != 0)
+            {
+                this.x = newTileX * world.map.tileWidth - world.map.tileWidth / 2.0f;
+                break;
+            }
+        }
 
     }
 
-    private void checkLeft()
+    private void checkLeft(float xMove)
     {
-        int topTileY = -Mathf.CeilToInt((this.y + world.map.tileHeight / 2.1f) / world.map.tileHeight);
-        int bottomTileY = -Mathf.CeilToInt((this.y - world.map.tileHeight / 2.1f) / world.map.tileHeight);
-        int newTileX = Mathf.FloorToInt((this.x - world.map.tileWidth / 2) / world.map.tileWidth);
-
-        if (world.collision.getFrameNum(newTileX, topTileY) != 0 ||
-            world.collision.getFrameNum(newTileX, bottomTileY) != 0)
+        while (xMove > 0)
         {
-            this.x = (newTileX + 1) * world.map.tileWidth + world.map.tileWidth / 2;
+            this.x -= Mathf.Min(xMove, world.map.tileWidth-1);
+            xMove -= Mathf.Min(xMove, world.map.tileWidth-1);
+
+            int topTileY = -Mathf.CeilToInt((this.y + world.map.tileHeight / 2.1f) / world.map.tileHeight);
+            int bottomTileY = -Mathf.CeilToInt((this.y - world.map.tileHeight / 2.1f) / world.map.tileHeight);
+            int newTileX = Mathf.FloorToInt((this.x - world.map.tileWidth / 2) / world.map.tileWidth);
+
+            if (world.collision.getFrameNum(newTileX, topTileY) != 0 ||
+                world.collision.getFrameNum(newTileX, bottomTileY) != 0)
+            {
+                this.x = (newTileX + 1) * world.map.tileWidth + world.map.tileWidth / 2;
+                break;
+            }
         }
     }
 
-    private void checkUp()
+    private void checkUp(float yMove)
     {
-        int rightTileX = Mathf.FloorToInt((this.x + world.map.tileWidth / 2.3f) / world.map.tileWidth);
-        int leftTileX = Mathf.FloorToInt((this.x - world.map.tileWidth / 2.3f) / world.map.tileWidth);
-        int newTileY = -Mathf.CeilToInt((this.y + world.map.tileHeight / 2) / world.map.tileHeight);
-
-        if (world.collision.getFrameNum(rightTileX, newTileY) != 0 ||
-            world.collision.getFrameNum(leftTileX, newTileY) != 0)
+        while (yMove > 0)
         {
-            this.y = -(newTileY + 1) * world.map.tileHeight - world.map.tileHeight / 2;
+            this.y += Mathf.Min(yMove, world.map.tileHeight - 1);
+            yMove -= Mathf.Min(yMove, world.map.tileHeight - 1);
+
+            int rightTileX = Mathf.FloorToInt((this.x + world.map.tileWidth / 2.1f) / world.map.tileWidth);
+            int leftTileX = Mathf.FloorToInt((this.x - world.map.tileWidth / 2.1f) / world.map.tileWidth);
+            int newTileY = -Mathf.CeilToInt((this.y + world.map.tileHeight / 2) / world.map.tileHeight);
+
+            if (world.collision.getFrameNum(rightTileX, newTileY) != 0 ||
+                world.collision.getFrameNum(leftTileX, newTileY) != 0)
+            {
+                this.y = -(newTileY + 1) * world.map.tileHeight - world.map.tileHeight / 2;
+                break;
+            }
         }
     }
 
-    private void checkDown()
+    private void checkDown(float yMove)
     {
-        int rightTileX = Mathf.FloorToInt((this.x + world.map.tileWidth / 2.3f) / world.map.tileWidth);
-        int leftTileX = Mathf.FloorToInt((this.x - world.map.tileWidth / 2.3f) / world.map.tileWidth);
-        int newTileY = -Mathf.CeilToInt((this.y - world.map.tileHeight / 2) / world.map.tileHeight);
-
-        if (world.collision.getFrameNum(rightTileX, newTileY) != 0 ||
-            world.collision.getFrameNum(leftTileX, newTileY) != 0)
+        while (yMove > 0)
         {
-            this.y = -(newTileY) * world.map.tileHeight + world.map.tileHeight / 2;
-            this.grounded = true;
-            this.yVel = 0;
+            this.y -= Mathf.Min(yMove, world.map.tileHeight - 1);
+            yMove -= Mathf.Min(yMove, world.map.tileHeight - 1);
+
+            int rightTileX = Mathf.FloorToInt((this.x + world.map.tileWidth / 2.1f) / world.map.tileWidth);
+            int leftTileX = Mathf.FloorToInt((this.x - world.map.tileWidth / 2.1f) / world.map.tileWidth);
+            int newTileY = -Mathf.CeilToInt((this.y - world.map.tileHeight / 2) / world.map.tileHeight);
+
+            if (world.collision.getFrameNum(rightTileX, newTileY) != 0 ||
+                world.collision.getFrameNum(leftTileX, newTileY) != 0)
+            {
+                this.y = -(newTileY) * world.map.tileHeight + world.map.tileHeight / 2;
+                this.grounded = true;
+                this.yVel = 0;
+                break;
+            }
         }
     }
 

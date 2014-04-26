@@ -154,7 +154,7 @@ public class Player : BaseGameObject
 
     private void spawnSparks()
     {
-        if (RXRandom.Float()< .6f)
+        if (RXRandom.Float()< .3f)
             return;
         sparkParticleDefinition.x = this.x;
         sparkParticleDefinition.y = this.y - 10;

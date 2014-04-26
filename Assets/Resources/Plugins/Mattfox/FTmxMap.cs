@@ -22,7 +22,7 @@ public class FTmxMap : FContainer {
 		_tilesets = new List<XMLNode>();
 		_layerNames = new List<string>();
 	}
-	public void LoadTMX(string fileName, bool isOutlineLayer = false) 
+	public void LoadTMX(string fileName) 
 	{
 		// load xml document
 		TextAsset dataAsset = (TextAsset) Resources.Load (fileName, typeof(TextAsset));
@@ -54,7 +54,7 @@ public class FTmxMap : FContainer {
 			
 			// create FTilemap for layer nodes
 			if (child.tagName == "layer" && child.children.Count > 0) {
-				FTilemap tilemap = (FTilemap)this.createTilemap(child, isOutlineLayer, 0);
+                FTilemap tilemap = (FTilemap)this.createTilemap(child);
 				tilemaps.Add(tilemap);
 				AddChild(tilemap);
 			}
@@ -171,7 +171,7 @@ public class FTmxMap : FContainer {
 		return objectGroup;
 	}
 	
-	virtual protected FNode createTilemap(XMLNode node, bool isOutlineLayer, int firstGID) 
+	virtual protected FNode createTilemap(XMLNode node)
 	{
 		XMLNode csvData = new XMLNode();
 		XMLNode properties = new XMLNode();
@@ -222,9 +222,6 @@ public class FTmxMap : FContainer {
 		}
 		
 		
-        if (isOutlineLayer)
-            baseName += "_outline";
-		
 		// create tilemap
 		FTilemap tilemap = new FTilemap(baseName);
 		if (!skipZero) {
@@ -232,7 +229,7 @@ public class FTmxMap : FContainer {
 			tilemap.clipNode = _clipNode;
 		}
         
-		tilemap.LoadText(csvText, skipZero, draw, firstGID);
+		tilemap.LoadText(csvText, skipZero, draw);
 		return tilemap;
 		
 	}

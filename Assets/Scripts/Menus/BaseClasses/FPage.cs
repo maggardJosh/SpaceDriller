@@ -72,7 +72,7 @@ public class FPage : FContainer
         this.transOut = newTransition;
     }
 
-    protected float animInTime = 2.6f;
+    protected float animInTime = 1.5f;
     protected float animOutTime = .5f;
     EaseType easeTypeIn = EaseType.CubicOut;
     EaseType easeTypeOut = EaseType.CubicIn;

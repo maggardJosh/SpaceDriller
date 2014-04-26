@@ -180,7 +180,9 @@
             <filename>white.png</filename>
             <filename>tilemap</filename>
             <filename>pressStart2P_0.png</filename>
-            <filename>tempPlayer</filename>
+            <filename>character</filename>
+            <filename>characterAttack</filename>
+            <filename>enemies</filename>
         </array>
         <key>ignoreFileList</key>
         <array/>

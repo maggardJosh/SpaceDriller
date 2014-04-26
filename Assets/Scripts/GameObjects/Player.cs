@@ -38,7 +38,7 @@ public class Player : BaseGameObject
 
     public Player()
     {
-        sparkParticleSystem = new FParticleSystem(60);
+        sparkParticleSystem = new FParticleSystem(100);
         sparkParticleDefinition = new FParticleDefinition(C.whiteElement);
         sparkParticleDefinition.startColor = Color.yellow;
         sparkParticleDefinition.startScale = .05f;
@@ -205,8 +205,8 @@ public class Player : BaseGameObject
             int bottomTileY = -Mathf.CeilToInt((this.y - world.map.tileHeight / 2.1f) / world.map.tileHeight);
             int newTileX = Mathf.FloorToInt((this.x + world.map.tileWidth / 2) / world.map.tileWidth);
 
-            if (world.collision.getFrameNum(newTileX, topTileY) != 0 ||
-                world.collision.getFrameNum(newTileX, bottomTileY) != 0)
+            if (world.collision.getFrameNum(newTileX, topTileY) == 1 ||
+                world.collision.getFrameNum(newTileX, bottomTileY) == 1)
             {
                 this.x = newTileX * world.map.tileWidth - world.map.tileWidth / 2.0f;
                 break;
@@ -226,8 +226,8 @@ public class Player : BaseGameObject
             int bottomTileY = -Mathf.CeilToInt((this.y - world.map.tileHeight / 2.1f) / world.map.tileHeight);
             int newTileX = Mathf.FloorToInt((this.x - world.map.tileWidth / 2) / world.map.tileWidth);
 
-            if (world.collision.getFrameNum(newTileX, topTileY) != 0 ||
-                world.collision.getFrameNum(newTileX, bottomTileY) != 0)
+            if (world.collision.getFrameNum(newTileX, topTileY) == 1 ||
+                world.collision.getFrameNum(newTileX, bottomTileY) == 1)
             {
                 this.x = (newTileX + 1) * world.map.tileWidth + world.map.tileWidth / 2;
                 break;
@@ -246,8 +246,8 @@ public class Player : BaseGameObject
             int leftTileX = Mathf.FloorToInt((this.x - world.map.tileWidth / 2.1f) / world.map.tileWidth);
             int newTileY = -Mathf.CeilToInt((this.y + world.map.tileHeight / 2) / world.map.tileHeight);
 
-            if (world.collision.getFrameNum(rightTileX, newTileY) != 0 ||
-                world.collision.getFrameNum(leftTileX, newTileY) != 0)
+            if (world.collision.getFrameNum(rightTileX, newTileY) == 1 ||
+                world.collision.getFrameNum(leftTileX, newTileY) == 1)
             {
                 this.y = -(newTileY + 1) * world.map.tileHeight - world.map.tileWidth / 2;
                 break;
@@ -266,8 +266,8 @@ public class Player : BaseGameObject
             int leftTileX = Mathf.FloorToInt((this.x - world.map.tileWidth / 2.1f) / world.map.tileWidth);
             int newTileY = -Mathf.CeilToInt((this.y - sprite.height / 2) / world.map.tileHeight);
 
-            if (world.collision.getFrameNum(rightTileX, newTileY) != 0 ||
-                world.collision.getFrameNum(leftTileX, newTileY) != 0)
+            if (world.collision.getFrameNum(rightTileX, newTileY) == 1 ||
+                world.collision.getFrameNum(leftTileX, newTileY) == 1)
             {
                 this.y = -(newTileY) * world.map.tileHeight + sprite.height / 2;
                 this.grounded = true;

@@ -55,7 +55,7 @@ public class World : FContainer
         for (int x = 0; x < objects.widthInTiles; x++)
             for (int y = 0; y < objects.heightInTiles; y++)
             {
-                if (objects.getFrameNum(x, y) != 0)
+                if (objects.getFrameNum(x, y) == 1)
                 {
                     spawnPoints.Add(new Vector2(x * map.tileWidth + map.tileWidth / 2, -y * map.tileHeight - map.tileHeight / 2));
                 }

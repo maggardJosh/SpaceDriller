@@ -33,8 +33,20 @@ public class Player : BaseGameObject
     int animSpeed = 100;
     bool isAttacking = false;
 
+    FParticleSystem sparkParticleSystem;
+    FParticleDefinition sparkParticleDefinition;
+
     public Player()
     {
+        sparkParticleSystem = new FParticleSystem(30);
+        sparkParticleDefinition = new FParticleDefinition(C.whiteElement);
+        sparkParticleDefinition.startColor = Color.yellow;
+        sparkParticleDefinition.startScale = .05f;
+        sparkParticleDefinition.endScale = 0;
+        sparkParticleDefinition.endColor = new Color(0, 0, 0, 0);
+        sparkParticleSystem.shouldNewParticlesOverwriteExistingParticles = false;
+        sparkParticleSystem.accelY = -60;
+
         sprite = new FAnimatedSprite("player");
         sprite.addAnimation(new FAnimation("leftIDLE", new int[] { 16 }, animSpeed, true));
         sprite.addAnimation(new FAnimation("rightIDLE", new int[] { 15 }, animSpeed, true));
@@ -56,12 +68,15 @@ public class Player : BaseGameObject
         attackSprite.addAnimation(new FAnimation("up", new int[] { 13, 14, 15, 16 }, animSpeed, true));
         this.AddChild(attackSprite);
         attackSprite.alpha = 0;
+        Futile.stage.AddChild(sparkParticleSystem);
 
     }
 
 
     protected override void Update()
     {
+        
+        
         base.Update();
         if (!isAlive)
             return;
@@ -122,6 +137,8 @@ public class Player : BaseGameObject
                 attackSprite.play("right");
         }
         attackSprite.alpha = isAttacking ? 1 : 0;
+        if (isAttacking)
+            spawnSparks();
 
         this.grounded = false;
         tryMove(xMove, yMove);
@@ -130,6 +147,16 @@ public class Player : BaseGameObject
             currentAnimState = AnimState.RUN;
 
         sprite.play((isFacingLeft ? "left" : "right") + currentAnimState);
+    }
+
+    private void spawnSparks()
+    {
+        sparkParticleDefinition.x = this.x;
+        sparkParticleDefinition.y = this.y;
+        sparkParticleDefinition.speedX = RXRandom.Float(100.0f) ;
+        sparkParticleDefinition.lifetime = 1;
+        sparkParticleDefinition.speedY = RXRandom.Float(100.0f);
+        sparkParticleSystem.AddParticle(sparkParticleDefinition);
     }
 
 

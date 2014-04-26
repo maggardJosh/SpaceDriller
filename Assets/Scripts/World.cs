@@ -16,10 +16,18 @@ public class World : FContainer
     FContainer playerLayer;
     FContainer foregroundLayer;
 
+    FSprite whiteOverlaySprite;
     public World()
         : base()
     {
         map = new FTmxMap();
+
+        whiteOverlaySprite = new FSprite(C.whiteElement);
+        whiteOverlaySprite.alpha = 0;
+        whiteOverlaySprite.color = Color.black;
+        whiteOverlaySprite.width = Futile.screen.width;
+        whiteOverlaySprite.height = Futile.screen.height;
+
     }
 
     public void loadMap(string mapName)
@@ -44,7 +52,7 @@ public class World : FContainer
             {
                 if (objects.getFrameNum(x, y) != 0)
                 {
-                    spawnPoints.Add(new Vector2(x * map.tileWidth + map.tileWidth/2 , -y * map.tileHeight - map.tileHeight/2));
+                    spawnPoints.Add(new Vector2(x * map.tileWidth + map.tileWidth / 2, -y * map.tileHeight - map.tileHeight / 2));
                 }
             }
 
@@ -58,6 +66,9 @@ public class World : FContainer
         this.AddChild(backgroundLayer);
         this.AddChild(playerLayer);
         this.AddChild(fg);
+        camera.AddChild(whiteOverlaySprite);
+        camera.MoveToFront();
+
 
     }
 
@@ -66,9 +77,15 @@ public class World : FContainer
         foreach (Door door in doorList)
             if (door.checkPlayer(p))
             {
-                this.RemoveAllChildren();
-                loadMap(door.toMap);
-                spawnPlayer(p, door.toDoor);
+                C.transitioning = true;
+                C.getCameraInstance().MoveToFront();
+                Go.to(whiteOverlaySprite, C.transitioningTime, new TweenConfig().floatProp("alpha", 1.0f).setEaseType(EaseType.QuadOut).onComplete((AbstractTween t) =>
+                {
+                    this.RemoveAllChildren();
+                    loadMap(door.toMap);
+                    spawnPlayer(p, door.toDoor);
+                    Go.to(whiteOverlaySprite, C.transitioningTime, new TweenConfig().floatProp("alpha", 0).setEaseType(EaseType.QuadIn).onComplete((AbstractTween t2) => { C.transitioning = false; }));
+                }));
                 break;
             }
     }
@@ -87,10 +104,10 @@ public class World : FContainer
                 string toDoor = "";
                 foreach (XMLNode property in ((XMLNode)node.children[0]).children)
                 {
-                    if(property.attributes["name"].ToLower().CompareTo("tomap") == 0)
+                    if (property.attributes["name"].ToLower().CompareTo("tomap") == 0)
                         toMap = property.attributes["value"];
                     else
-                        if(property.attributes["name"].ToLower().CompareTo("todoor") == 0)
+                        if (property.attributes["name"].ToLower().CompareTo("todoor") == 0)
                             toDoor = property.attributes["value"];
                 }
                 doorList.Add(new Door(pos, width, height, node.attributes["name"], toMap, toDoor));
@@ -113,7 +130,6 @@ public class World : FContainer
         playerLayer.AddChild(p);
         foreach (Door door in doorList)
         {
-            RXDebug.Log(door.Name);
             if (door.Name.ToLower().CompareTo(toDoor.ToLower()) == 0)
             {
                 door.spawnPlayer(p);

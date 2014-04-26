@@ -4,38 +4,30 @@ using System.Linq;
 using System.Text;
 using UnityEngine;
 
-public class Player : FSprite
+public class Player : BaseGameObject
 {
     public World world;
+
+    private FSprite sprite;
+
     float speed = 200.0f;
     float yVel = 0;
     float gravity = -20;
     bool grounded = false;
     float jumpForce = 7;
 
-    float disabledTimeLeft = 0;
-    bool disabled = false;
-
     public Player()
-        : base("character")
     {
-
+        sprite = new FSprite("character");
+        this.AddChild(sprite);
     }
 
-    public override void HandleAddedToStage()
-    {
-        Futile.instance.SignalUpdate += Update;
-        base.HandleAddedToStage();
-    }
 
-    public override void HandleRemovedFromStage()
+    protected override void Update()
     {
-        Futile.instance.SignalUpdate -= Update;
-        base.HandleRemovedFromStage();
-    }
-
-    private void Update()
-    {
+        base.Update();
+        if (!isAlive)
+            return;
         if (world == null)
             return;
         float xMove = 0;
@@ -64,23 +56,9 @@ public class Player : FSprite
         tryMove(xMove, yMove);
     }
 
-    public void disableMovement(float time)
-    {
-        this.disabledTimeLeft = time;
-        this.disabled = false;              //Set to false so we know when to start the countdown.
-    }
 
     private void tryMove(float xMove, float yMove)
     {
-        if (disabledTimeLeft > 0)
-        {
-            if (!disabled)
-                disabled = true;
-            else
-                disabledTimeLeft -= UnityEngine.Time.deltaTime;
-
-            return;     //Disabled don't move
-        }
 
         if (xMove > 0)
             checkRight(xMove);
@@ -88,7 +66,7 @@ public class Player : FSprite
             checkLeft(-xMove);
 
 
-       
+
         if (yMove > 0)
             checkUp(yMove);
         else if (yMove < 0)
@@ -102,8 +80,8 @@ public class Player : FSprite
     {
         while (xMove > 0)
         {
-            this.x += Mathf.Min(xMove, world.map.tileWidth-1);
-            xMove -= Mathf.Min(xMove, world.map.tileWidth-1);
+            this.x += Mathf.Min(xMove, world.map.tileWidth - 1);
+            xMove -= Mathf.Min(xMove, world.map.tileWidth - 1);
 
             int topTileY = -Mathf.CeilToInt((this.y + world.map.tileHeight / 2.1f) / world.map.tileHeight);
             int bottomTileY = -Mathf.CeilToInt((this.y - world.map.tileHeight / 2.1f) / world.map.tileHeight);
@@ -123,8 +101,8 @@ public class Player : FSprite
     {
         while (xMove > 0)
         {
-            this.x -= Mathf.Min(xMove, world.map.tileWidth-1);
-            xMove -= Mathf.Min(xMove, world.map.tileWidth-1);
+            this.x -= Mathf.Min(xMove, world.map.tileWidth - 1);
+            xMove -= Mathf.Min(xMove, world.map.tileWidth - 1);
 
             int topTileY = -Mathf.CeilToInt((this.y + world.map.tileHeight / 2.1f) / world.map.tileHeight);
             int bottomTileY = -Mathf.CeilToInt((this.y - world.map.tileHeight / 2.1f) / world.map.tileHeight);

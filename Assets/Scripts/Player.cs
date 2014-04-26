@@ -29,15 +29,15 @@ public class Player : BaseGameObject
 
     public Player()
     {
-        sprite = new FAnimatedSprite("character");
-        sprite.addAnimation(new FAnimation("leftIDLE", new int[] { 1, 2 }, 100, true));
-        sprite.addAnimation(new FAnimation("rightIDLE", new int[] { 1, 2 }, 100, true));
-        sprite.addAnimation(new FAnimation("leftRUN", new int[] { 3, 4 }, 100, true));
-        sprite.addAnimation(new FAnimation("rightRUN", new int[] { 5, 6 }, 100, true));
-        sprite.addAnimation(new FAnimation("leftJUMP", new int[] { 7, 8 }, 100, true));
-        sprite.addAnimation(new FAnimation("rightJUMP", new int[] { 7, 8 }, 100, true));
-        sprite.addAnimation(new FAnimation("leftFALL", new int[] { 9, 10 }, 100, true));
-        sprite.addAnimation(new FAnimation("rightFALL", new int[] { 9, 10 }, 100, true));
+        sprite = new FAnimatedSprite("player");
+        sprite.addAnimation(new FAnimation("leftIDLE", new int[] { 5 }, 100, true));
+        sprite.addAnimation(new FAnimation("rightIDLE", new int[] { 1 }, 100, true));
+        sprite.addAnimation(new FAnimation("leftRUN", new int[] { 5, 6, 7, 8 }, 100, true));
+        sprite.addAnimation(new FAnimation("rightRUN", new int[] { 1,2,3,4 }, 100, true));
+        sprite.addAnimation(new FAnimation("leftJUMP", new int[] { 11 }, 100, true));
+        sprite.addAnimation(new FAnimation("rightJUMP", new int[] { 9 }, 100, true));
+        sprite.addAnimation(new FAnimation("leftFALL", new int[] { 12 }, 100, true));
+        sprite.addAnimation(new FAnimation("rightFALL", new int[] { 10 }, 100, true));
         sprite.play("leftIDLE");
         this.AddChild(sprite);
     }
@@ -149,7 +149,7 @@ public class Player : BaseGameObject
             if (world.collision.getFrameNum(newTileX, topTileY) != 0 ||
                 world.collision.getFrameNum(newTileX, bottomTileY) != 0)
             {
-                this.x = (newTileX + 1) * world.map.tileWidth + world.map.tileWidth / 2;
+                this.x = (newTileX + 1) * world.map.tileWidth + world.map.tileWidth/ 2;
                 break;
             }
         }
@@ -169,7 +169,7 @@ public class Player : BaseGameObject
             if (world.collision.getFrameNum(rightTileX, newTileY) != 0 ||
                 world.collision.getFrameNum(leftTileX, newTileY) != 0)
             {
-                this.y = -(newTileY + 1) * world.map.tileHeight - world.map.tileHeight / 2;
+                this.y = -(newTileY + 1) * world.map.tileHeight - world.map.tileWidth / 2;
                 break;
             }
         }
@@ -184,12 +184,12 @@ public class Player : BaseGameObject
 
             int rightTileX = Mathf.FloorToInt((this.x + world.map.tileWidth / 2.1f) / world.map.tileWidth);
             int leftTileX = Mathf.FloorToInt((this.x - world.map.tileWidth / 2.1f) / world.map.tileWidth);
-            int newTileY = -Mathf.CeilToInt((this.y - world.map.tileHeight / 2) / world.map.tileHeight);
+            int newTileY = -Mathf.CeilToInt((this.y - sprite.height / 2) / world.map.tileHeight);
 
             if (world.collision.getFrameNum(rightTileX, newTileY) != 0 ||
                 world.collision.getFrameNum(leftTileX, newTileY) != 0)
             {
-                this.y = -(newTileY) * world.map.tileHeight + world.map.tileHeight / 2;
+                this.y = -(newTileY) * world.map.tileHeight + sprite.height / 2;
                 this.grounded = true;
                 this.yVel = 0;
                 currentAnimState = AnimState.IDLE;

@@ -26,6 +26,7 @@ public class Player : BaseGameObject
     float speed = 200.0f;
     float yVel = 0;
     float gravity = -20;
+    float maxYVel = -8;
     bool grounded = false;
     float jumpForce = 7;
 
@@ -92,7 +93,7 @@ public class Player : BaseGameObject
                 if (Input.GetKey(KeyCode.S))
                         currentAnimState = AnimState.FALL_ATTACK_DOWN;
             }
-        yVel = Mathf.Clamp(yVel, -6, jumpForce);
+        yVel = Mathf.Clamp(yVel, maxYVel, jumpForce);
         yMove = yVel;
         if (Input.GetKey(KeyCode.A))
         {

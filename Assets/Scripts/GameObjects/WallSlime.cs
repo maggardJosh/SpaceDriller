@@ -83,6 +83,9 @@ public class WallSlime : BaseGameObject
     float idleMinCount = 1.0f;
     protected override void Update()
     {
+        base.Update();
+        if (!isAlive)
+            return;
         switch (currentState)
         {
             case State.IDLE:
@@ -163,6 +166,5 @@ public class WallSlime : BaseGameObject
                     world.p.takeDamage(this);
                 }
         }
-        base.Update();
     }
 }

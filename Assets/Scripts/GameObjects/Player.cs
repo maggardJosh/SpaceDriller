@@ -46,6 +46,8 @@ public class Player : BaseGameObject
 
     public float lastX = 0;
     public float lastY = 0;
+    int jumpsLeft = 1;
+    public int maxJumpsLeft = 1;       // 2 = double jump
 
     float collisionWidth = 20;
     float collisionHeight = 25;
@@ -63,10 +65,11 @@ public class Player : BaseGameObject
         sparkParticleSystem.accelY = -300;
 
         sprite = new FAnimatedSprite("player");
-        sprite.addAnimation(new FAnimation("leftIDLE", new int[] { 16 }, animSpeed, true));
-        sprite.addAnimation(new FAnimation("rightIDLE", new int[] { 15 }, animSpeed, true));
         sprite.addAnimation(new FAnimation("leftstun", new int[] { 32, 14 }, animSpeed / 100, true));
         sprite.addAnimation(new FAnimation("rightstun", new int[] { 31, 13 }, animSpeed / 100, true));
+
+        sprite.addAnimation(new FAnimation("leftIDLE", new int[] { 16 }, animSpeed, true));
+        sprite.addAnimation(new FAnimation("rightIDLE", new int[] { 15 }, animSpeed, true));
         sprite.addAnimation(new FAnimation("leftRUN", new int[] { 5, 6, 7, 8 }, animSpeed, true));
         sprite.addAnimation(new FAnimation("rightRUN", new int[] { 1, 2, 3, 4 }, animSpeed, true));
         sprite.addAnimation(new FAnimation("leftJUMP", new int[] { 11 }, animSpeed, true));
@@ -90,7 +93,6 @@ public class Player : BaseGameObject
         this.damage = 1;
     }
 
-    int jumpsLeft = 1;
 
     protected override void Update()
     {
@@ -111,19 +113,12 @@ public class Player : BaseGameObject
 
             if (Input.GetKeyDown(KeyCode.Space))            //Space has been pressed. Start jumping
             {
-                if (grounded)
+                if (jumpsLeft > 0)
                 {
+                    jumpsLeft--;
                     yVel = jumpForce;
-                    //State to jump
                 }
-                else
-                {
-                    if (jumpsLeft > 0)
-                    {
-                        jumpsLeft--;
-                        yVel = jumpForce;
-                    }
-                }
+
             }
             else if (!Input.GetKey(KeyCode.Space))       //Space is not held down... Let the player stop jumping if currently jumping
             {
@@ -397,6 +392,13 @@ public class Player : BaseGameObject
             healthBar.setHealth(this.health);
         }
     }
+    public bool contains(Vector2 point)
+    {
+        return (point.x > x - collisionWidth / 2 &&
+            point.x < x + collisionWidth / 2 &&
+            point.y < y + collisionHeight / 2 &&
+            point.y > y - sprite.height);
+    }
 
     public void bounce()
     {
@@ -434,7 +436,7 @@ public class Player : BaseGameObject
                 this.grounded = true;
                 this.xVel = 0;
                 this.yVel = 0;
-                this.jumpsLeft = 1;
+                this.jumpsLeft = this.maxJumpsLeft;
                 break;
             }
         }

@@ -11,7 +11,7 @@ public class OverheatBar : FContainer
     FSprite barBG;
     FWipeSprite filledBar;
 
-    float barWidth = 100;
+    float barWidth = 94;
     float barHeight = 10;
     float blackBarMargin = 2;
 

@@ -10,7 +10,7 @@
   <image source="gfx/collision.png" width="32" height="32"/>
  </tileset>
  <tileset firstgid="32" name="objects" tilewidth="32" tileheight="32">
-  <image source="gfx/objects.png" width="64" height="32"/>
+  <image source="gfx/objects.png" width="96" height="32"/>
  </tileset>
  <layer name="BG" width="15" height="10">
   <data encoding="csv">
@@ -57,32 +57,18 @@
 31,31,31,31,31,31,31,31,31,31,31,31,31,31,31
 </data>
  </layer>
- <layer name="Objects" width="15" height="10" opacity="0.23">
-  <properties>
-   <property name="draw" value="false"/>
-  </properties>
-  <data encoding="csv">
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-</data>
- </layer>
  <objectgroup name="Doors" width="15" height="10">
   <object name="leftDoor" type="Door" x="32" y="128" width="32" height="64">
    <properties>
-    <property name="toDoor" value="rightDoor"/>
+    <property name="toDoor" value="bootDoor"/>
     <property name="toMap" value="testMap"/>
    </properties>
   </object>
  </objectgroup>
  <objectgroup name="Enemies" width="15" height="10" opacity="0.37">
   <object gid="33" x="320" y="256"/>
+ </objectgroup>
+ <objectgroup name="Objects" width="15" height="10">
+  <object gid="34" x="224" y="288"/>
  </objectgroup>
 </map>

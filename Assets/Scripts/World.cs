@@ -12,6 +12,7 @@ public class World : FContainer
     List<Vector2> spawnPoints = new List<Vector2>();
     List<Door> doorList = new List<Door>();
     List<BaseGameObject> enemies = new List<BaseGameObject>();
+    List<Pickup> pickups = new List<Pickup>();
 
     FContainer backgroundLayer;
     FContainer playerLayer;
@@ -38,6 +39,18 @@ public class World : FContainer
 
     }
 
+    public override void HandleAddedToStage()
+    {
+        Futile.instance.SignalUpdate += Update;
+        base.HandleAddedToStage();
+    }
+
+    public override void HandleRemovedFromStage()
+    {
+        Futile.instance.SignalUpdate -= Update;
+        base.HandleRemovedFromStage();
+    }
+
     public void loadMap(string mapName)
     {
         backgroundLayer = new FContainer();
@@ -54,15 +67,6 @@ public class World : FContainer
         camera.setWorldBounds(new Rect(0, -map.height, map.width, map.height));
 
         collision = (FTilemap)map.getLayerNamed("Collision");
-        FTilemap objects = (FTilemap)map.getLayerNamed("Objects");
-        for (int x = 0; x < objects.widthInTiles; x++)
-            for (int y = 0; y < objects.heightInTiles; y++)
-            {
-                if (objects.getFrameNum(x, y) == 1)
-                {
-                    spawnPoints.Add(new Vector2(x * map.tileWidth + map.tileWidth / 2, -y * map.tileHeight - map.tileHeight / 2));
-                }
-            }
 
         addObjects(map);
 
@@ -102,6 +106,23 @@ public class World : FContainer
             }
     }
 
+    private void Update()
+    {
+        if (C.transitioning)
+            return;
+
+        foreach (Pickup pickup in pickups)
+        {
+            if (p.contains(pickup.GetPosition()))
+            {
+                pickup.pickup(p);
+                pickups.Remove(pickup);
+                break;
+            }
+        }
+
+    }
+
 
     private void addObjects(FTmxMap map)
     {
@@ -114,6 +135,9 @@ public class World : FContainer
                 {
                     case 2:
                         addSlime(node);
+                        break;
+                    case 3:
+                        addJumpBoots(node);
                         break;
                 }
             }
@@ -154,11 +178,21 @@ public class World : FContainer
         playerLayer.AddChild(enemy);
     }
 
+    private void addJumpBoots(XMLNode node)
+    {
+        if (p.maxJumpsLeft == 1)
+        {
+            JumpBoots boot = new JumpBoots(new Vector2(int.Parse(node.attributes["x"]) + map.tileWidth / 2, -int.Parse(node.attributes["y"]) + map.tileHeight / 2));
+            pickups.Add(boot);
+            playerLayer.AddChild(boot);
+        }
+    }
+
     public void spawnPlayer(Player p, String toDoor)
     {
         this.p = p;
         C.getCameraInstance().follow(p);
-        
+
         playerLayer.AddChild(p);
         foreach (Door door in doorList)
         {

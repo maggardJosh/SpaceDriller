@@ -184,6 +184,7 @@
             <filename>characterAttack</filename>
             <filename>enemies</filename>
             <filename>pressStart2Psmall_0.png</filename>
+            <filename>pickups</filename>
         </array>
         <key>ignoreFileList</key>
         <array/>

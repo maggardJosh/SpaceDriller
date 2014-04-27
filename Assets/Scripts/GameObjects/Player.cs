@@ -22,10 +22,10 @@ public class Player : BaseGameObject
     bool isFacingLeft = false;
     float speed = 200.0f;
     float yVel = 0;
-    float gravity = -20;
-    float maxYVel = -8;
+    float gravity = -28;
+    float maxYVel = -14;
     bool grounded = false;
-    float jumpForce = 7;
+    float jumpForce = 8;
 
     int animSpeed = 100;
     bool isAttacking = false;

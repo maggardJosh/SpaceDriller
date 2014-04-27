@@ -125,7 +125,7 @@ public class WallSlime : BaseGameObject
                 break;
         }
         Vector2 playerRelativePos = this.GetPosition() - world.p.GetPosition();
-        if (playerRelativePos.sqrMagnitude < sprite.width * sprite.width)
+        if (playerRelativePos.sqrMagnitude < (sprite.width * sprite.width)/5)
         {
             world.p.takeDamage(this);
         }

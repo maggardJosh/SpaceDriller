@@ -22,7 +22,7 @@ public class WallSlime : BaseGameObject
     Vector2 secondaryPos;
 
     float yMargin = 10;
-    int landAnimSpeed = 70;
+    int landAnimSpeed = 50;
 
     public WallSlime(Vector2 position, float rotation = 0)
     {
@@ -34,7 +34,7 @@ public class WallSlime : BaseGameObject
         sprite.addAnimation(new FAnimation("idle", new int[] { 1 }, 100));
         sprite.addAnimation(new FAnimation("start_launch", new int[] { 1, 2, 3, 4, 5, 6 }, landAnimSpeed, false));
         sprite.addAnimation(new FAnimation("launching", new int[] { 6 }, 100, true));
-        sprite.addAnimation(new FAnimation("landing", new int[] { 7, 8, 9, 10, 11, 12 }, landAnimSpeed, false));
+        sprite.addAnimation(new FAnimation("landing", new int[] { 8, 9, 10, 11, 12 }, landAnimSpeed, false));
 
         sprite.play("idle");
         currentState = State.IDLE;
@@ -73,10 +73,12 @@ public class WallSlime : BaseGameObject
         }
 
         secondaryPos = new Vector2(tileX * world.map.tileWidth + world.map.tileWidth / 2, -tileY * world.map.tileHeight - world.map.tileHeight / 2);
+        movementTime = (originalPos - secondaryPos).magnitude / 300.0f;
         
     }
     bool atSecondaryPosition = false;
-
+    EaseType movementEase = EaseType.QuartIn;
+    float movementTime = .8f;
     protected override void Update()
     {
         switch (currentState)
@@ -100,9 +102,9 @@ public class WallSlime : BaseGameObject
                     Go.killAllTweensWithTarget(this);
                     sprite.play("launching");
                     if (sprite.rotation == 0 || sprite.rotation == 180)
-                        Go.to(this, 1.0f, new TweenConfig().floatProp("x", atSecondaryPosition ? originalPos.x : secondaryPos.x).setEaseType(EaseType.CubicOut).onComplete((AbstractTween t) => { sprite.play("landing"); currentState = State.LANDING; }));
+                        Go.to(this, movementTime, new TweenConfig().floatProp("x", atSecondaryPosition ? originalPos.x : secondaryPos.x).setEaseType(movementEase).onComplete((AbstractTween t) => { sprite.play("landing"); currentState = State.LANDING; }));
                     else
-                        Go.to(this, 1.0f, new TweenConfig().floatProp("y", atSecondaryPosition ? originalPos.y : secondaryPos.y).setEaseType(EaseType.CubicOut).onComplete((AbstractTween t) => { sprite.play("landing"); currentState = State.LANDING; }));
+                        Go.to(this, movementTime, new TweenConfig().floatProp("y", atSecondaryPosition ? originalPos.y : secondaryPos.y).setEaseType(movementEase).onComplete((AbstractTween t) => { sprite.play("landing"); currentState = State.LANDING; }));
                     currentState = State.LAUNCHING;
                 }
                 break;

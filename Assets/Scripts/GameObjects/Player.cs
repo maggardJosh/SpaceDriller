@@ -18,7 +18,6 @@ public class Player : BaseGameObject
     AnimState currentAnimState = AnimState.IDLE;
 
     private FAnimatedSprite sprite;
-    private FAnimatedSprite attackSprite;
 
     bool isFacingLeft = false;
     float speed = 200.0f;
@@ -63,22 +62,15 @@ public class Player : BaseGameObject
         this.AddChild(sprite);
         this.AddChild(sparkParticleSystem);
 
-        attackSprite = new FAnimatedSprite("playerAttack");
-        attackSprite.addAnimation(new FAnimation("right", new int[] { 1, 2, 3, 4 }, animSpeed, true));
-        attackSprite.addAnimation(new FAnimation("left", new int[] { 5, 6, 7, 8 }, animSpeed, true));
-        attackSprite.addAnimation(new FAnimation("down", new int[] { 9, 10, 11, 12 }, animSpeed, true));
-        attackSprite.addAnimation(new FAnimation("up", new int[] { 13, 14, 15, 16 }, animSpeed, true));
-        //this.AddChild(attackSprite);
-        attackSprite.alpha = 0;
-
     }
 
+    int jumpsLeft = 1;
 
     protected override void Update()
     {
         lastX = this.x;
         lastY = this.y;
-        
+
         base.Update();
         if (!isAlive)
             return;
@@ -95,6 +87,14 @@ public class Player : BaseGameObject
                 yVel = jumpForce;
                 //State to jump
             }
+            else
+            {
+                if (jumpsLeft > 0)
+                {
+                    jumpsLeft--;
+                    yVel = jumpForce;
+                }
+            }
         }
         else if (!Input.GetKey(KeyCode.Space))       //Space is not held down... Let the player stop jumping if currently jumping
         {
@@ -108,7 +108,7 @@ public class Player : BaseGameObject
             {
                 currentAnimState = AnimState.FALL;
                 if (Input.GetKey(KeyCode.S))
-                        currentAnimState = AnimState.FALL_ATTACK_DOWN;
+                    currentAnimState = AnimState.FALL_ATTACK_DOWN;
             }
         yVel = Mathf.Clamp(yVel, maxYVel, jumpForce);
         yMove = yVel;
@@ -124,21 +124,11 @@ public class Player : BaseGameObject
                 isFacingLeft = false;
             }
 
-     
+
 
         if (Input.GetKeyDown(KeyCode.U))
             isAttacking = !isAttacking;
 
-        if (currentAnimState == AnimState.FALL_ATTACK_DOWN)
-            attackSprite.play("down");
-        else
-        {
-            if (isFacingLeft)
-                attackSprite.play("left");
-            else
-                attackSprite.play("right");
-        }
-        attackSprite.alpha = isAttacking ? 1 : 0;
         if (isAttacking)
             spawnSparks();
 
@@ -156,7 +146,7 @@ public class Player : BaseGameObject
 
     private void spawnSparks()
     {
-        if (RXRandom.Float()< .3f)
+        if (RXRandom.Float() < .3f)
             return;
         sparkParticleDefinition.x = this.x;
         sparkParticleDefinition.y = this.y - 10;
@@ -169,7 +159,7 @@ public class Player : BaseGameObject
         sparkParticleDefinition.x += RXRandom.Float() * randomPosDist - randomPosDist / 2;
         sparkParticleDefinition.y += RXRandom.Float() * randomPosDist - randomPosDist / 2;
 
-        float angle = (3/2.0f) * Mathf.PI + RXRandom.Float(Mathf.PI);
+        float angle = (3 / 2.0f) * Mathf.PI + RXRandom.Float(Mathf.PI);
         sparkParticleDefinition.speedX = Mathf.Cos(angle) * (50 + 50 * RXRandom.Float());
         sparkParticleDefinition.speedY = Mathf.Sin(angle) * (50 + 50 * RXRandom.Float());
 
@@ -178,7 +168,7 @@ public class Player : BaseGameObject
         sparkParticleSystem.AddParticle(sparkParticleDefinition);
     }
 
-#region moveFunctions
+    #region moveFunctions
     private void tryMove(float xMove, float yMove)
     {
 
@@ -274,11 +264,12 @@ public class Player : BaseGameObject
                 this.y = -(newTileY) * world.map.tileHeight + sprite.height / 2;
                 this.grounded = true;
                 this.yVel = 0;
+                this.jumpsLeft = 1;
                 currentAnimState = AnimState.IDLE;
                 break;
             }
         }
     }
-#endregion
+    #endregion
 
 }

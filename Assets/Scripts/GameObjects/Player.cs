@@ -68,24 +68,45 @@ public class Player : BaseGameObject
         sprite.addAnimation(new FAnimation("leftstun", new int[] { 32, 14 }, animSpeed / 100, true));
         sprite.addAnimation(new FAnimation("rightstun", new int[] { 31, 13 }, animSpeed / 100, true));
 
-        sprite.addAnimation(new FAnimation("leftIDLE", new int[] { 16 }, animSpeed, true));
-        sprite.addAnimation(new FAnimation("rightIDLE", new int[] { 15 }, animSpeed, true));
-        sprite.addAnimation(new FAnimation("leftRUN", new int[] { 5, 6, 7, 8 }, animSpeed, true));
         sprite.addAnimation(new FAnimation("rightRUN", new int[] { 1, 2, 3, 4 }, animSpeed, true));
-        sprite.addAnimation(new FAnimation("leftJUMP", new int[] { 11 }, animSpeed, true));
+        sprite.addAnimation(new FAnimation("leftRUN", new int[] { 5, 6, 7, 8 }, animSpeed, true));
         sprite.addAnimation(new FAnimation("rightJUMP", new int[] { 9 }, animSpeed, true));
-        sprite.addAnimation(new FAnimation("leftFALL", new int[] { 12 }, animSpeed, true));
         sprite.addAnimation(new FAnimation("rightFALL", new int[] { 10 }, animSpeed, true));
-        sprite.addAnimation(new FAnimation("leftFALL_ATTACK_DOWN", new int[] { 14 }, animSpeed, true));
+        sprite.addAnimation(new FAnimation("leftJUMP", new int[] { 11 }, animSpeed, true));
+        sprite.addAnimation(new FAnimation("leftFALL", new int[] { 12 }, animSpeed, true));
         sprite.addAnimation(new FAnimation("rightFALL_ATTACK_DOWN", new int[] { 13 }, animSpeed, true));
-        sprite.addAnimation(new FAnimation("leftRUN_ATTACK_UP", new int[] { 21, 22, 23, 24 }, animSpeed, true));
+        sprite.addAnimation(new FAnimation("leftFALL_ATTACK_DOWN", new int[] { 14 }, animSpeed, true));
+        sprite.addAnimation(new FAnimation("rightIDLE", new int[] { 15 }, animSpeed, true));
+        sprite.addAnimation(new FAnimation("leftIDLE", new int[] { 16 }, animSpeed, true));
         sprite.addAnimation(new FAnimation("rightRUN_ATTACK_UP", new int[] { 17, 18, 19, 20 }, animSpeed, true));
-        sprite.addAnimation(new FAnimation("leftJUMP_ATTACK_UP", new int[] { 27 }, animSpeed, true));
+        sprite.addAnimation(new FAnimation("leftRUN_ATTACK_UP", new int[] { 21, 22, 23, 24 }, animSpeed, true));
         sprite.addAnimation(new FAnimation("rightJUMP_ATTACK_UP", new int[] { 25 }, animSpeed, true));
-        sprite.addAnimation(new FAnimation("leftFALL_ATTACK_UP", new int[] { 28 }, animSpeed, true));
         sprite.addAnimation(new FAnimation("rightFALL_ATTACK_UP", new int[] { 26 }, animSpeed, true));
-        sprite.addAnimation(new FAnimation("leftIDLE_ATTACK_UP", new int[] { 30 }, animSpeed, true));
+        sprite.addAnimation(new FAnimation("leftJUMP_ATTACK_UP", new int[] { 27 }, animSpeed, true));
+        sprite.addAnimation(new FAnimation("leftFALL_ATTACK_UP", new int[] { 28 }, animSpeed, true));
         sprite.addAnimation(new FAnimation("rightIDLE_ATTACK_UP", new int[] { 29 }, animSpeed, true));
+        sprite.addAnimation(new FAnimation("leftIDLE_ATTACK_UP", new int[] { 30 }, animSpeed, true));
+
+        sprite.addAnimation(new FAnimation("drillrightRUN", new int[] { 33,34,35,36 }, animSpeed, true));
+        sprite.addAnimation(new FAnimation("drillleftRUN", new int[] { 37,38,39,40 }, animSpeed, true));
+        sprite.addAnimation(new FAnimation("drillrightJUMP", new int[] { 41,42 }, animSpeed, true));
+        sprite.addAnimation(new FAnimation("drillrightFALL", new int[] { 43,44 }, animSpeed, true));
+        sprite.addAnimation(new FAnimation("drillleftJUMP", new int[] { 45,46 }, animSpeed, true));
+        sprite.addAnimation(new FAnimation("drillleftFALL", new int[] { 47,48 }, animSpeed, true));
+        sprite.addAnimation(new FAnimation("drillrightFALL_ATTACK_DOWN", new int[] { 49,50 }, animSpeed, true));
+        sprite.addAnimation(new FAnimation("drillleftFALL_ATTACK_DOWN", new int[] { 51,52 }, animSpeed, true));
+        sprite.addAnimation(new FAnimation("drillrightIDLE", new int[] { 53,54 }, animSpeed, true));
+        sprite.addAnimation(new FAnimation("drillleftIDLE", new int[] { 55,56 }, animSpeed, true));
+        sprite.addAnimation(new FAnimation("drillrightRUN_ATTACK_UP", new int[] { 57,58,59,60 }, animSpeed, true));
+        sprite.addAnimation(new FAnimation("drillleftRUN_ATTACK_UP", new int[] { 61,62,63,64 }, animSpeed, true));
+        sprite.addAnimation(new FAnimation("drillleftFALL_ATTACK_UP", new int[] { 65,66 }, animSpeed, true));
+        sprite.addAnimation(new FAnimation("drillleftJUMP_ATTACK_UP", new int[] { 67,68 }, animSpeed, true));
+        sprite.addAnimation(new FAnimation("drillrightJUMP_ATTACK_UP", new int[] { 69,70 }, animSpeed, true));
+        sprite.addAnimation(new FAnimation("drillrightFALL_ATTACK_UP", new int[] { 71,72 }, animSpeed, true));
+        sprite.addAnimation(new FAnimation("drillrightIDLE_ATTACK_UP", new int[] { 73,74 }, animSpeed, true));
+        sprite.addAnimation(new FAnimation("drillleftIDLE_ATTACK_UP", new int[] { 75,76 }, animSpeed, true));
+
+        
         sprite.play("leftIDLE");
         this.AddChild(sprite);
         this.AddChild(sparkParticleSystem);
@@ -222,7 +243,7 @@ public class Player : BaseGameObject
         else
         {
             sprite.alpha = 1;
-            sprite.play((isFacingLeft ? "left" : "right") + currentAnimState);
+            sprite.play((isAttackDown() ? "drill" : "" ) + (isFacingLeft ? "left" : "right") + currentAnimState);
         }
         if (invulnerableCount > 0)
         {

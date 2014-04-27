@@ -97,7 +97,6 @@ public class SpaceGhost : BaseGameObject
 
         if (playerRelativePos.sqrMagnitude < (sprite.width * sprite.width))
         {
-            RXDebug.Log(sprite.width);
             if (world.p.isAttackingDown() && world.p.yVel < 0 && world.p.y > this.y && world.p.x < this.x + Mathf.Abs(sprite.width) / 2 && world.p.x > this.x - Mathf.Abs(sprite.width) / 2)
             {
                 world.p.bounce();

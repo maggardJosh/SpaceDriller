@@ -2,11 +2,126 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using UnityEngine;
 
 public class WallSlime : BaseGameObject
 {
-    public WallSlime()
+    private enum State
+    {
+        IDLE,
+        STARTING_LAUNCH,
+        LAUNCHING,
+        LANDING
+    }
+
+    State currentState;
+
+    FAnimatedSprite sprite;
+
+    Vector2 originalPos;
+    Vector2 secondaryPos;
+
+    float yMargin = 10;
+    int landAnimSpeed = 70;
+
+    public WallSlime(Vector2 position, float rotation = 0)
     {
 
+        this.SetPosition(position);
+        originalPos = this.GetPosition();
+
+        sprite = new FAnimatedSprite("wallSlime/wallSlime");
+        sprite.addAnimation(new FAnimation("idle", new int[] { 1 }, 100));
+        sprite.addAnimation(new FAnimation("start_launch", new int[] { 1, 2, 3, 4, 5, 6 }, landAnimSpeed, false));
+        sprite.addAnimation(new FAnimation("launching", new int[] { 6 }, 100, true));
+        sprite.addAnimation(new FAnimation("landing", new int[] { 7, 8, 9, 10, 11, 12 }, landAnimSpeed, false));
+
+        sprite.play("idle");
+        currentState = State.IDLE;
+        sprite.rotation = rotation;
+        this.AddChild(sprite);
+    }
+
+    public override void setWorld(World world)
+    {
+        base.setWorld(world);
+
+        int tileX = Mathf.FloorToInt(this.x / world.map.tileWidth);
+        int tileY = Mathf.FloorToInt(-this.y / world.map.tileHeight);
+
+        if (sprite.rotation == 0)
+        {
+            while (world.collision.getFrameNum(tileX - 1, tileY) != 1)
+                tileX--;
+        }
+        else if (sprite.rotation == 180)
+        {
+            while (world.collision.getFrameNum(tileX + 1, tileY) != 1)
+                tileX++;
+        }
+        else if (sprite.rotation == 90)
+        {
+            //up
+            while (world.collision.getFrameNum(tileX, tileY - 1) != 1)
+                tileY--;
+        }
+        else if (sprite.rotation == 270)
+        {
+            //Down
+            while (world.collision.getFrameNum(tileX, tileY + 1) != 1)
+                tileY++;
+        }
+
+        secondaryPos = new Vector2(tileX * world.map.tileWidth + world.map.tileWidth / 2, -tileY * world.map.tileHeight - world.map.tileHeight / 2);
+        
+    }
+    bool atSecondaryPosition = false;
+
+    protected override void Update()
+    {
+        switch (currentState)
+        {
+            case State.IDLE:
+                if (sprite.currentAnim.name != "idle")
+                    sprite.play("idle");
+                //Player crossed our LoS ATTACK!
+                if (((sprite.rotation == 0 || sprite.rotation == 180)
+                    && (world.p.y < this.y + yMargin && world.p.y > this.y - yMargin)) ||
+                    ((sprite.rotation == 90 || sprite.rotation == 270) 
+                    && ( world.p.x < this.x + yMargin && world.p.x > this.x - yMargin)))
+                {
+                    sprite.play("start_launch", true);
+                    currentState = State.STARTING_LAUNCH;
+                }
+                break;
+            case State.STARTING_LAUNCH:
+                if (sprite.IsStopped)
+                {
+                    Go.killAllTweensWithTarget(this);
+                    sprite.play("launching");
+                    if (sprite.rotation == 0 || sprite.rotation == 180)
+                        Go.to(this, 1.0f, new TweenConfig().floatProp("x", atSecondaryPosition ? originalPos.x : secondaryPos.x).setEaseType(EaseType.CubicOut).onComplete((AbstractTween t) => { sprite.play("landing"); currentState = State.LANDING; }));
+                    else
+                        Go.to(this, 1.0f, new TweenConfig().floatProp("y", atSecondaryPosition ? originalPos.y : secondaryPos.y).setEaseType(EaseType.CubicOut).onComplete((AbstractTween t) => { sprite.play("landing"); currentState = State.LANDING; }));
+                    currentState = State.LAUNCHING;
+                }
+                break;
+            case State.LAUNCHING:
+                //Do nothing Go Kit takes care of this
+                break;
+            case State.LANDING:
+                if (sprite.IsStopped)
+                {
+                    currentState = State.IDLE;
+                    sprite.play("idle");
+                    sprite.rotation += 180;
+                    atSecondaryPosition = !atSecondaryPosition;
+                    if (sprite.rotation >= 360)
+                        sprite.rotation -= 360;
+
+                }
+                break;
+        }
+        base.Update();
     }
 }

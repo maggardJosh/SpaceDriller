@@ -14,7 +14,7 @@ public class InGamePage : FPage
         world = new World();
         Futile.stage.AddChild(world);
         world.loadMap("testMap");
-        world.spawnPlayer(new Player());
+        world.spawnPlayer(new Player(), "topDoor");
     }
 
 }

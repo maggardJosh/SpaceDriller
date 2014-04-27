@@ -134,4 +134,22 @@
    </properties>
   </object>
  </objectgroup>
+ <objectgroup name="Enemies" width="30" height="20">
+  <object gid="33" x="352" y="288"/>
+  <object gid="33" x="192" y="384">
+   <properties>
+    <property name="rotation" value="180"/>
+   </properties>
+  </object>
+  <object gid="33" x="160" y="192">
+   <properties>
+    <property name="rotation" value="270"/>
+   </properties>
+  </object>
+  <object gid="33" x="288" y="448">
+   <properties>
+    <property name="rotation" value="90"/>
+   </properties>
+  </object>
+ </objectgroup>
 </map>

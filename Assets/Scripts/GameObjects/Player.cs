@@ -17,8 +17,6 @@ public class Player : BaseGameObject
 
     AnimState currentAnimState = AnimState.IDLE;
 
-    public World world;
-
     private FAnimatedSprite sprite;
     private FAnimatedSprite attackSprite;
 
@@ -35,6 +33,9 @@ public class Player : BaseGameObject
 
     FParticleSystem sparkParticleSystem;
     FParticleDefinition sparkParticleDefinition;
+
+    public float lastX = 0;
+    public float lastY = 0;
 
     public Player()
     {
@@ -75,7 +76,8 @@ public class Player : BaseGameObject
 
     protected override void Update()
     {
-        
+        lastX = this.x;
+        lastY = this.y;
         
         base.Update();
         if (!isAlive)
@@ -176,7 +178,7 @@ public class Player : BaseGameObject
         sparkParticleSystem.AddParticle(sparkParticleDefinition);
     }
 
-
+#region moveFunctions
     private void tryMove(float xMove, float yMove)
     {
 
@@ -277,10 +279,6 @@ public class Player : BaseGameObject
             }
         }
     }
-
-    public void setWorld(World world)
-    {
-        this.world = world;
-    }
+#endregion
 
 }

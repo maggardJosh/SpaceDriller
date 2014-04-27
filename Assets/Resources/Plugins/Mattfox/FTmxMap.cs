@@ -156,7 +156,7 @@ public class FTmxMap : FContainer
         return returnValue;
     }
 
-    protected int getTilesetFirstIDForID(int num)
+    public int getTilesetFirstIDForID(int num)
     {
         if (_tilesets.Count < 1)
         {

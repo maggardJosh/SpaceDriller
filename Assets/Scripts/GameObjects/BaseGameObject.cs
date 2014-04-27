@@ -6,6 +6,7 @@ using System.Text;
 public class BaseGameObject : FContainer
 {
     protected bool isAlive = true;
+    protected World world;
     public BaseGameObject()
     {
 
@@ -26,5 +27,10 @@ public class BaseGameObject : FContainer
     protected virtual void Update()
     {
         isAlive = !C.transitioning;
+    }
+
+    public virtual void setWorld(World world)
+    {
+        this.world = world;
     }
 }

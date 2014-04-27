@@ -11,6 +11,7 @@ public class World : FContainer
 
     List<Vector2> spawnPoints = new List<Vector2>();
     List<Door> doorList = new List<Door>();
+    List<BaseGameObject> enemies = new List<BaseGameObject>();
 
     FContainer backgroundLayer;
     FContainer playerLayer;
@@ -18,6 +19,8 @@ public class World : FContainer
 
     FSprite whiteOverlaySprite;
     FLabel mapNameLabel;
+
+    public Player p;
 
     public World()
         : base()
@@ -61,7 +64,7 @@ public class World : FContainer
                 }
             }
 
-        addDoors(map);
+        addObjects(map);
 
         FTilemap fg = (FTilemap)map.getLayerNamed("FG");
         map.RemoveChild(fg);
@@ -99,49 +102,61 @@ public class World : FContainer
             }
     }
 
-    private void addDoors(FTmxMap map)
+
+    private void addObjects(FTmxMap map)
     {
         foreach (XMLNode node in map.objects)
         {
-            if (node.attributes["type"].ToLower().CompareTo("door") == 0)
+            if (node.attributes.ContainsKey("gid"))
             {
-                //Is a door object
-                Vector2 pos = new Vector2(float.Parse(node.attributes["x"]), float.Parse(node.attributes["y"]));
-                float width = float.Parse(node.attributes["width"]);
-                float height = float.Parse(node.attributes["height"]);
-                string toMap = "";
-                string toDoor = "";
-                foreach (XMLNode property in ((XMLNode)node.children[0]).children)
+                int frameNum = int.Parse(node.attributes["gid"]) - (map.getTilesetFirstIDForID(int.Parse(node.attributes["gid"])) - 1);
+                switch (frameNum)
                 {
-                    if (property.attributes["name"].ToLower().CompareTo("tomap") == 0)
-                        toMap = property.attributes["value"];
-                    else
-                        if (property.attributes["name"].ToLower().CompareTo("todoor") == 0)
-                            toDoor = property.attributes["value"];
+                    case 2:
+                        addSlime(node);
+                        break;
                 }
-                doorList.Add(new Door(pos, width, height, node.attributes["name"], toMap, toDoor));
             }
+            else
+                if (node.attributes["type"].ToLower().CompareTo("door") == 0)
+                {
+                    //Is a door object
+                    Vector2 pos = new Vector2(float.Parse(node.attributes["x"]), float.Parse(node.attributes["y"]));
+                    float width = float.Parse(node.attributes["width"]);
+                    float height = float.Parse(node.attributes["height"]);
+                    string toMap = "";
+                    string toDoor = "";
+                    foreach (XMLNode property in ((XMLNode)node.children[0]).children)
+                    {
+                        if (property.attributes["name"].ToLower().CompareTo("tomap") == 0)
+                            toMap = property.attributes["value"];
+                        else
+                            if (property.attributes["name"].ToLower().CompareTo("todoor") == 0)
+                                toDoor = property.attributes["value"];
+                    }
+                    doorList.Add(new Door(pos, width, height, node.attributes["name"], toMap, toDoor));
+                }
         }
     }
 
-    public void spawnPlayer(Player p)
+    private void addSlime(XMLNode node)
     {
-        C.transitioning = true;
-        C.getCameraInstance().follow(p);
-        playerLayer.AddChild(p);
-        if (spawnPoints.Count > 0)
-            p.SetPosition(spawnPoints[RXRandom.Int(spawnPoints.Count)]);
-        p.setWorld(this);
-        whiteOverlaySprite.alpha = 1;
-        mapNameLabel.alpha = 1;
-        Go.killAllTweensWithTarget(mapNameLabel);
-        mapNameLabel.text = map.mapName;
-        C.getCameraInstance().MoveToFront();
-        Go.to(whiteOverlaySprite, 1, new TweenConfig().floatProp("alpha", 0).setEaseType(EaseType.QuadIn).onComplete((AbstractTween t2) => { C.transitioning = false; Go.to(mapNameLabel, 2.0f, new TweenConfig().floatProp("alpha", 0).setDelay(1.0f).setEaseType(EaseType.QuadIn)); }));
+        float rotation = 0;
+        if (node.children.Count > 0)
+            foreach (XMLNode properties in ((XMLNode)node.children[0]).children)
+            {
+                if (properties.attributes["name"].CompareTo("rotation") == 0)
+                    rotation = int.Parse(properties.attributes["value"]);
+            }
+        WallSlime enemy = new WallSlime(new Vector2(int.Parse(node.attributes["x"]) + map.tileWidth / 2, -int.Parse(node.attributes["y"]) + map.tileHeight / 2), rotation);
+        enemy.setWorld(this);
+        enemies.Add(enemy);
+        playerLayer.AddChild(enemy);
     }
 
     public void spawnPlayer(Player p, String toDoor)
     {
+        this.p = p;
         C.getCameraInstance().follow(p);
         playerLayer.AddChild(p);
         foreach (Door door in doorList)
@@ -152,6 +167,8 @@ public class World : FContainer
                 break;
             }
         }
+        p.lastY = p.y;
+        p.lastX = p.x;
         p.setWorld(this);
     }
 }

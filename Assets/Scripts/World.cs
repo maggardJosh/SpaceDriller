@@ -158,6 +158,7 @@ public class World : FContainer
     {
         this.p = p;
         C.getCameraInstance().follow(p);
+        
         playerLayer.AddChild(p);
         foreach (Door door in doorList)
         {

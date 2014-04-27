@@ -12,7 +12,11 @@ public class Player : BaseGameObject
         RUN,
         JUMP,
         FALL,
-        FALL_ATTACK_DOWN
+        FALL_ATTACK_DOWN,
+        RUN_ATTACK_UP,
+        IDLE_ATTACK_UP,
+        JUMP_ATTACK_UP,
+        FALL_ATTACK_UP
     }
 
     AnimState currentAnimState = AnimState.IDLE;
@@ -36,6 +40,9 @@ public class Player : BaseGameObject
     public float lastX = 0;
     public float lastY = 0;
 
+    float collisionWidth = 20;
+    float collisionHeight = 25;
+
     public Player()
     {
         sparkParticleSystem = new FParticleSystem(100);
@@ -58,6 +65,14 @@ public class Player : BaseGameObject
         sprite.addAnimation(new FAnimation("rightFALL", new int[] { 10 }, animSpeed, true));
         sprite.addAnimation(new FAnimation("leftFALL_ATTACK_DOWN", new int[] { 14 }, animSpeed, true));
         sprite.addAnimation(new FAnimation("rightFALL_ATTACK_DOWN", new int[] { 13 }, animSpeed, true));
+        sprite.addAnimation(new FAnimation("leftRUN_ATTACK_UP", new int[] { 21, 22, 23, 24 }, animSpeed, true));
+        sprite.addAnimation(new FAnimation("rightRUN_ATTACK_UP", new int[] { 17, 18, 19, 20 }, animSpeed, true));
+        sprite.addAnimation(new FAnimation("leftJUMP_ATTACK_UP", new int[] { 27 }, animSpeed, true));
+        sprite.addAnimation(new FAnimation("rightJUMP_ATTACK_UP", new int[] { 25 }, animSpeed, true));
+        sprite.addAnimation(new FAnimation("leftFALL_ATTACK_UP", new int[] { 28 }, animSpeed, true));
+        sprite.addAnimation(new FAnimation("rightFALL_ATTACK_UP", new int[] { 26 }, animSpeed, true));
+        sprite.addAnimation(new FAnimation("leftIDLE_ATTACK_UP", new int[] { 30 }, animSpeed, true));
+        sprite.addAnimation(new FAnimation("rightIDLE_ATTACK_UP", new int[] { 29 }, animSpeed, true));
         sprite.play("leftIDLE");
         this.AddChild(sprite);
         this.AddChild(sparkParticleSystem);
@@ -129,14 +144,26 @@ public class Player : BaseGameObject
         if (Input.GetKeyDown(KeyCode.U))
             isAttacking = !isAttacking;
 
-        if (isAttacking)
-            spawnSparks();
 
         this.grounded = false;
         tryMove(xMove, yMove);
 
         if (currentAnimState == AnimState.IDLE && xMove != 0)
             currentAnimState = AnimState.RUN;
+
+        if (Input.GetKey(KeyCode.W))
+        {
+            if (currentAnimState == AnimState.IDLE)
+                currentAnimState = AnimState.IDLE_ATTACK_UP;
+            else if (currentAnimState == AnimState.RUN)
+                currentAnimState = AnimState.RUN_ATTACK_UP;
+            else if (currentAnimState == AnimState.JUMP)
+                currentAnimState = AnimState.JUMP_ATTACK_UP;
+            else if (currentAnimState == AnimState.FALL)
+                currentAnimState = AnimState.FALL_ATTACK_UP;
+        }
+        if (isAttacking)
+            spawnSparks();
 
         sprite.play((isFacingLeft ? "left" : "right") + currentAnimState);
 
@@ -150,18 +177,31 @@ public class Player : BaseGameObject
             return;
         sparkParticleDefinition.x = this.x;
         sparkParticleDefinition.y = this.y - 10;
+        float angle = 90 - RXRandom.Float(90f);
 
-        if (isFacingLeft)
-            sparkParticleDefinition.x -= 15;
-        else
-            sparkParticleDefinition.x += 15;
+        if (currentAnimState == AnimState.FALL_ATTACK_UP ||
+            currentAnimState == AnimState.IDLE_ATTACK_UP ||
+            currentAnimState == AnimState.JUMP_ATTACK_UP ||
+            currentAnimState == AnimState.RUN_ATTACK_UP)
+        {
+            sparkParticleDefinition.y += 20;
+            angle += 90;
+        }
+        else if (currentAnimState == AnimState.FALL_ATTACK_DOWN)
+        {
+            sparkParticleDefinition.y -= 10;
+            angle -= 90;
+        }else
+            if (isFacingLeft)
+                sparkParticleDefinition.x -= 15;
+            else
+                sparkParticleDefinition.x += 15;
         float randomPosDist = 10;
         sparkParticleDefinition.x += RXRandom.Float() * randomPosDist - randomPosDist / 2;
         sparkParticleDefinition.y += RXRandom.Float() * randomPosDist - randomPosDist / 2;
 
-        float angle = (3 / 2.0f) * Mathf.PI + RXRandom.Float(Mathf.PI);
-        sparkParticleDefinition.speedX = Mathf.Cos(angle) * (50 + 50 * RXRandom.Float());
-        sparkParticleDefinition.speedY = Mathf.Sin(angle) * (50 + 50 * RXRandom.Float());
+        sparkParticleDefinition.speedX = Mathf.Cos(angle * C.PIOVER180) * (75 + 25 * RXRandom.Float());
+        sparkParticleDefinition.speedY = Mathf.Sin(angle * C.PIOVER180) * (75 + 25 * RXRandom.Float());
 
         if (isFacingLeft)
             sparkParticleDefinition.speedX *= -1;
@@ -193,14 +233,14 @@ public class Player : BaseGameObject
             this.x += Mathf.Min(xMove, world.map.tileWidth - 1);
             xMove -= Mathf.Min(xMove, world.map.tileWidth - 1);
 
-            int topTileY = -Mathf.CeilToInt((this.y + world.map.tileHeight / 2.1f) / world.map.tileHeight);
-            int bottomTileY = -Mathf.CeilToInt((this.y - world.map.tileHeight / 2.1f) / world.map.tileHeight);
-            int newTileX = Mathf.FloorToInt((this.x + world.map.tileWidth / 2) / world.map.tileWidth);
+            int topTileY = -Mathf.CeilToInt((this.y + collisionHeight / 2.1f) / world.map.tileHeight);
+            int bottomTileY = -Mathf.CeilToInt((this.y - collisionHeight / 2.1f) / world.map.tileHeight);
+            int newTileX = Mathf.FloorToInt((this.x + collisionWidth / 2) / world.map.tileWidth);
 
             if (world.collision.getFrameNum(newTileX, topTileY) == 1 ||
                 world.collision.getFrameNum(newTileX, bottomTileY) == 1)
             {
-                this.x = newTileX * world.map.tileWidth - world.map.tileWidth / 2.0f;
+                this.x = newTileX * world.map.tileWidth - collisionWidth / 2.0f;
                 break;
             }
         }
@@ -214,14 +254,14 @@ public class Player : BaseGameObject
             this.x -= Mathf.Min(xMove, world.map.tileWidth - 1);
             xMove -= Mathf.Min(xMove, world.map.tileWidth - 1);
 
-            int topTileY = -Mathf.CeilToInt((this.y + world.map.tileHeight / 2.1f) / world.map.tileHeight);
-            int bottomTileY = -Mathf.CeilToInt((this.y - world.map.tileHeight / 2.1f) / world.map.tileHeight);
-            int newTileX = Mathf.FloorToInt((this.x - world.map.tileWidth / 2) / world.map.tileWidth);
+            int topTileY = -Mathf.CeilToInt((this.y + collisionHeight / 2.1f) / world.map.tileHeight);
+            int bottomTileY = -Mathf.CeilToInt((this.y - collisionHeight / 2.1f) / world.map.tileHeight);
+            int newTileX = Mathf.FloorToInt((this.x - collisionWidth / 2) / world.map.tileWidth);
 
             if (world.collision.getFrameNum(newTileX, topTileY) == 1 ||
                 world.collision.getFrameNum(newTileX, bottomTileY) == 1)
             {
-                this.x = (newTileX + 1) * world.map.tileWidth + world.map.tileWidth / 2;
+                this.x = (newTileX + 1) * world.map.tileWidth + collisionWidth / 2;
                 break;
             }
         }
@@ -234,14 +274,14 @@ public class Player : BaseGameObject
             this.y += Mathf.Min(yMove, world.map.tileHeight - 1);
             yMove -= Mathf.Min(yMove, world.map.tileHeight - 1);
 
-            int rightTileX = Mathf.FloorToInt((this.x + world.map.tileWidth / 2.1f) / world.map.tileWidth);
-            int leftTileX = Mathf.FloorToInt((this.x - world.map.tileWidth / 2.1f) / world.map.tileWidth);
-            int newTileY = -Mathf.CeilToInt((this.y + world.map.tileHeight / 2) / world.map.tileHeight);
+            int rightTileX = Mathf.FloorToInt((this.x + collisionWidth / 2.1f) / world.map.tileWidth);
+            int leftTileX = Mathf.FloorToInt((this.x - collisionWidth / 2.1f) / world.map.tileWidth);
+            int newTileY = -Mathf.CeilToInt((this.y + collisionHeight / 2) / world.map.tileHeight);
 
             if (world.collision.getFrameNum(rightTileX, newTileY) == 1 ||
                 world.collision.getFrameNum(leftTileX, newTileY) == 1)
             {
-                this.y = -(newTileY + 1) * world.map.tileHeight - world.map.tileWidth / 2;
+                this.y = -(newTileY + 1) * world.map.tileHeight - collisionHeight / 2;
                 break;
             }
         }
@@ -254,8 +294,8 @@ public class Player : BaseGameObject
             this.y -= Mathf.Min(yMove, world.map.tileHeight - 1);
             yMove -= Mathf.Min(yMove, world.map.tileHeight - 1);
 
-            int rightTileX = Mathf.FloorToInt((this.x + world.map.tileWidth / 2.1f) / world.map.tileWidth);
-            int leftTileX = Mathf.FloorToInt((this.x - world.map.tileWidth / 2.1f) / world.map.tileWidth);
+            int rightTileX = Mathf.FloorToInt((this.x + collisionWidth / 2.1f) / world.map.tileWidth);
+            int leftTileX = Mathf.FloorToInt((this.x - collisionWidth / 2.1f) / world.map.tileWidth);
             int newTileY = -Mathf.CeilToInt((this.y - sprite.height / 2) / world.map.tileHeight);
 
             if (world.collision.getFrameNum(rightTileX, newTileY) == 1 ||

@@ -257,7 +257,7 @@ public class Player : BaseGameObject
 
     public bool isAttackingDown()
     {
-        return currentAnimState == AnimState.FALL_ATTACK_DOWN;
+        return currentAnimState == AnimState.FALL_ATTACK_DOWN && isAttackDown();
     }
     public bool isAttackingRight()
     {
@@ -271,7 +271,7 @@ public class Player : BaseGameObject
 
     public bool isAttackingUp()
     {
-        return (currentAnimState == AnimState.FALL_ATTACK_UP || currentAnimState == AnimState.IDLE_ATTACK_UP || currentAnimState == AnimState.JUMP_ATTACK_UP || currentAnimState == AnimState.RUN_ATTACK_UP);
+        return (currentAnimState == AnimState.FALL_ATTACK_UP || currentAnimState == AnimState.IDLE_ATTACK_UP || currentAnimState == AnimState.JUMP_ATTACK_UP || currentAnimState == AnimState.RUN_ATTACK_UP) && isAttackDown();
     }
 
     #region moveFunctions
@@ -358,10 +358,10 @@ public class Player : BaseGameObject
         if (stunCount <= 0 && invulnerableCount <= 0)
         {
             stunCount = .4f;
-            if (myObject.x < this.x)
-                xVel = 3;
-            else
+            if (myObject.x > this.x)
                 xVel = -3;
+            else
+                xVel = 3;
             yVel = jumpForce / 2;
         }
     }

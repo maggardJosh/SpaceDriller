@@ -28,13 +28,14 @@ public class Player : BaseGameObject
     float stunCount = 0;            //If this is above zero we've been stunned and shouldn't move
     float invulnerableCount = 0;    //While this is above zero we can't take damage
     float xVel = 0;
-    float yVel = 0;
+    public float yVel { private set; get; }
     float gravity = -28;
     float maxYVel = -14;
     bool grounded = false;
     float jumpForce = 8;
 
     int animSpeed = 100;
+    bool forceBounce = false;
 
     FParticleSystem sparkParticleSystem;
     FParticleDefinition sparkParticleDefinition;
@@ -120,19 +121,20 @@ public class Player : BaseGameObject
             }
             else if (!Input.GetKey(KeyCode.Space))       //Space is not held down... Let the player stop jumping if currently jumping
             {
-                if (yVel > 0)
+                if (!forceBounce && yVel > 0)
                     yVel *= .4f;
             }
             if (yVel > 0)
                 currentAnimState = AnimState.JUMP;
             else
+            {
+                forceBounce = false;
                 if (yVel < 0 && !grounded)
                 {
                     currentAnimState = AnimState.FALL;
-                    if (Input.GetKey(KeyCode.S))
-                        currentAnimState = AnimState.FALL_ATTACK_DOWN;
-                }
 
+                }
+            }
             if (Input.GetKey(KeyCode.A))
             {
                 xMove = -Time.deltaTime * speed;
@@ -148,8 +150,14 @@ public class Player : BaseGameObject
                 currentAnimState = AnimState.IDLE;
             if (currentAnimState == AnimState.IDLE && xMove != 0)
                 currentAnimState = AnimState.RUN;
+            if (Input.GetKey(KeyCode.S))
+            {
+                if (currentAnimState == AnimState.JUMP || currentAnimState == AnimState.FALL)
+                    currentAnimState = AnimState.FALL_ATTACK_DOWN;
+            }
             if (Input.GetKey(KeyCode.W))
             {
+                
                 if (currentAnimState == AnimState.IDLE)
                     currentAnimState = AnimState.IDLE_ATTACK_UP;
                 else if (currentAnimState == AnimState.RUN)
@@ -245,6 +253,11 @@ public class Player : BaseGameObject
         sparkParticleSystem.AddParticle(sparkParticleDefinition);
     }
 
+    public bool isAttackingDown()
+    {
+        return currentAnimState == AnimState.FALL_ATTACK_DOWN;
+    }
+
     #region moveFunctions
     private void tryMove(float xMove, float yMove)
     {
@@ -328,7 +341,6 @@ public class Player : BaseGameObject
     {
         if (stunCount <= 0 && invulnerableCount <= 0)
         {
-
             stunCount = .4f;
             if (myObject.x < this.x)
                 xVel = 3;
@@ -336,6 +348,13 @@ public class Player : BaseGameObject
                 xVel = -3;
             yVel = jumpForce / 2;
         }
+    }
+
+    public void bounce()
+    {
+        yVel = jumpForce * .8f;
+        forceBounce = true;
+      
     }
 
     private void checkDown(float yMove)

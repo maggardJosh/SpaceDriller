@@ -33,7 +33,7 @@ public class WallSlime : BaseGameObject
         sprite = new FAnimatedSprite("wallSlime/wallSlime");
         sprite.addAnimation(new FAnimation("idle", new int[] { 1 }, 100));
         sprite.addAnimation(new FAnimation("start_launch", new int[] { 1, 2, 3, }, landAnimSpeed, false));
-        sprite.addAnimation(new FAnimation("launching", new int[] { 4,5,6 }, 100, false));
+        sprite.addAnimation(new FAnimation("launching", new int[] { 4, 5, 6 }, 100, false));
         sprite.addAnimation(new FAnimation("landing", new int[] { 8, 9, 10, 11, 12 }, landAnimSpeed, false));
 
         sprite.play("idle");
@@ -74,11 +74,13 @@ public class WallSlime : BaseGameObject
 
         secondaryPos = new Vector2(tileX * world.map.tileWidth + world.map.tileWidth / 2, -tileY * world.map.tileHeight - world.map.tileHeight / 2);
         movementTime = (originalPos - secondaryPos).magnitude / 300.0f;
-        
+
     }
     bool atSecondaryPosition = false;
     EaseType movementEase = EaseType.QuartIn;
     float movementTime = .8f;
+    float idleCount = 0;
+    float idleMinCount = 1.0f;
     protected override void Update()
     {
         switch (currentState)
@@ -87,10 +89,15 @@ public class WallSlime : BaseGameObject
                 if (sprite.currentAnim.name != "idle")
                     sprite.play("idle");
                 //Player crossed our LoS ATTACK!
+                if (idleCount < idleMinCount)
+                {
+                    idleCount += UnityEngine.Time.deltaTime;
+                    break;
+                }
                 if (((sprite.rotation == 0 || sprite.rotation == 180)
                     && (world.p.y < this.y + yMargin && world.p.y > this.y - yMargin)) ||
-                    ((sprite.rotation == 90 || sprite.rotation == 270) 
-                    && ( world.p.x < this.x + yMargin && world.p.x > this.x - yMargin)))
+                    ((sprite.rotation == 90 || sprite.rotation == 270)
+                    && (world.p.x < this.x + yMargin && world.p.x > this.x - yMargin)))
                 {
                     sprite.play("start_launch", true);
                     currentState = State.STARTING_LAUNCH;
@@ -114,6 +121,7 @@ public class WallSlime : BaseGameObject
             case State.LANDING:
                 if (sprite.IsStopped)
                 {
+                    idleCount = 0;
                     currentState = State.IDLE;
                     sprite.play("idle");
                     sprite.rotation += 180;
@@ -125,9 +133,20 @@ public class WallSlime : BaseGameObject
                 break;
         }
         Vector2 playerRelativePos = this.GetPosition() - world.p.GetPosition();
-        if (playerRelativePos.sqrMagnitude < (sprite.width * sprite.width)/5)
+        if (playerRelativePos.sqrMagnitude < (sprite.width * sprite.width) / 2)
         {
-            world.p.takeDamage(this);
+            if (world.p.isAttackingDown() && world.p.yVel < 0 && world.p.y > this.y)
+            {
+
+                world.p.bounce();
+                this.takeDamage(world.p.damage);
+
+            }
+            else
+                if (playerRelativePos.sqrMagnitude < (sprite.width * sprite.width) / 5)
+                {
+                    world.p.takeDamage(this);
+                }
         }
         base.Update();
     }

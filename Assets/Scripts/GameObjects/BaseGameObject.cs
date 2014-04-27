@@ -7,6 +7,9 @@ public class BaseGameObject : FContainer
 {
     protected bool isAlive = true;
     protected World world;
+    public int health = 2;
+    public int damage = 1;
+
     public BaseGameObject()
     {
 
@@ -32,5 +35,20 @@ public class BaseGameObject : FContainer
     public virtual void setWorld(World world)
     {
         this.world = world;
+    }
+
+    protected void takeDamage(int damageAmount)
+    {
+        this.health -= damageAmount;
+        for (int i = 0; i < damageAmount; i++)
+            Futile.stage.AddChild(new DamageIndicator(this.GetPosition()));
+        if (this.health <= 0)
+            this.die();
+    }
+
+    protected void die()
+    {
+        //TODO: actual death 
+        this.RemoveFromContainer();
     }
 }

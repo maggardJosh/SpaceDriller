@@ -8,6 +8,7 @@ public static class C
 {
     public const string whiteElement = "white";
     public const string NormalFont = "PressStart2P";
+    public const string SmallFont = "PressStart2Psmall";
     public const float disableMovementTime = .5f;
 
     public static bool transitioning = false;

@@ -15,6 +15,7 @@ public class GameScript : MonoBehaviour {
         Futile.atlasManager.LoadAtlas("Atlases/gameAtlas");
 
         Futile.atlasManager.LoadFont(C.NormalFont, "pressStart2P_0", "Atlases/pressStart2P", 0,0);
+        Futile.atlasManager.LoadFont(C.SmallFont, "pressStart2Psmall_0", "Atlases/pressStart2Psmall", 0, 0);
 
         FPageManager.getInstance();
 

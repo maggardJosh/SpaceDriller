@@ -38,6 +38,9 @@ public class Player : BaseGameObject
     int animSpeed = 100;
     bool forceBounce = false;
 
+    float overheat = 0;
+    bool isOverheated = false;
+
     FParticleSystem sparkParticleSystem;
     FParticleDefinition sparkParticleDefinition;
 
@@ -160,7 +163,7 @@ public class Player : BaseGameObject
             }
             if (Input.GetKey(KeyCode.W))
             {
-                
+
                 if (currentAnimState == AnimState.IDLE)
                     currentAnimState = AnimState.IDLE_ATTACK_UP;
                 else if (currentAnimState == AnimState.RUN)
@@ -170,8 +173,33 @@ public class Player : BaseGameObject
                 else if (currentAnimState == AnimState.FALL)
                     currentAnimState = AnimState.FALL_ATTACK_UP;
             }
-            if (isAttackDown())
+            if (isAttackDown() && !isOverheated)
+            {
                 spawnSparks();
+                overheat += UnityEngine.Time.deltaTime * .3f;
+                if (overheat >= 1)
+                {
+                    overheat = 1;
+                    isOverheated = true;
+                }
+            }
+            else if (isOverheated)
+            {
+                overheat -= UnityEngine.Time.deltaTime * .2f;
+                if (overheat <= 0)
+                {
+                    isOverheated = false;
+                }
+            }
+            else if (!isAttackDown())
+            {
+                if (overheat > 0)
+                    overheat -= UnityEngine.Time.deltaTime * .3f;
+                else
+                    overheat = 0;
+            }
+            overheatBar.setIsOverheated(isOverheated);
+            overheatBar.setOverheat(overheat);
         }
         else
         {
@@ -258,21 +286,21 @@ public class Player : BaseGameObject
 
     public bool isAttackingDown()
     {
-        return currentAnimState == AnimState.FALL_ATTACK_DOWN && isAttackDown();
+        return !isOverheated && currentAnimState == AnimState.FALL_ATTACK_DOWN && isAttackDown();
     }
     public bool isAttackingRight()
     {
-        return (stunCount <= 0) && (currentAnimState == AnimState.RUN || currentAnimState == AnimState.IDLE || currentAnimState == AnimState.JUMP || currentAnimState == AnimState.FALL) && !isFacingLeft && isAttackDown();
+        return !isOverheated && (stunCount <= 0) && (currentAnimState == AnimState.RUN || currentAnimState == AnimState.IDLE || currentAnimState == AnimState.JUMP || currentAnimState == AnimState.FALL) && !isFacingLeft && isAttackDown();
     }
 
     public bool isAttackingLeft()
     {
-        return (stunCount <= 0) && (currentAnimState == AnimState.RUN || currentAnimState == AnimState.IDLE || currentAnimState == AnimState.JUMP || currentAnimState == AnimState.FALL) && isFacingLeft && isAttackDown();
+        return !isOverheated && (stunCount <= 0) && (currentAnimState == AnimState.RUN || currentAnimState == AnimState.IDLE || currentAnimState == AnimState.JUMP || currentAnimState == AnimState.FALL) && isFacingLeft && isAttackDown();
     }
 
     public bool isAttackingUp()
     {
-        return (currentAnimState == AnimState.FALL_ATTACK_UP || currentAnimState == AnimState.IDLE_ATTACK_UP || currentAnimState == AnimState.JUMP_ATTACK_UP || currentAnimState == AnimState.RUN_ATTACK_UP) && isAttackDown();
+        return !isOverheated && (currentAnimState == AnimState.FALL_ATTACK_UP || currentAnimState == AnimState.IDLE_ATTACK_UP || currentAnimState == AnimState.JUMP_ATTACK_UP || currentAnimState == AnimState.RUN_ATTACK_UP) && isAttackDown();
     }
 
     #region moveFunctions
@@ -374,12 +402,18 @@ public class Player : BaseGameObject
     {
         yVel = jumpForce * .8f;
         forceBounce = true;
-      
+
     }
     HealthBar healthBar;
     public void setHealthBar(HealthBar hb)
     {
         this.healthBar = hb;
+    }
+
+    OverheatBar overheatBar;
+    public void setOverheatBar(OverheatBar ob)
+    {
+        this.overheatBar = ob;
     }
 
     private void checkDown(float yMove)

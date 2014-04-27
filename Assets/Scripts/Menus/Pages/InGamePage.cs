@@ -17,10 +17,18 @@ public class InGamePage : FPage
         Player p = new Player();
         world.spawnPlayer(p, "topDoor");
         HealthBar hb = new HealthBar();
+        OverheatBar ob = new OverheatBar();
         hb.y = (int)(Futile.screen.halfHeight - hb.Height / 2 - 10);
         hb.x = (int)(-Futile.screen.halfWidth + hb.Width / 2 + 10);
+
+        ob.y = hb.y - hb.Height / 2 - ob.Height / 2 - 5;
+        ob.x = hb.x;
+
         C.getCameraInstance().AddChild(hb);
+        C.getCameraInstance().AddChild(ob);
+        
         p.setHealthBar(hb);
+        p.setOverheatBar(ob);
     }
 
 }

@@ -32,10 +32,10 @@ public class SpaceGhost : BaseGameObject
         originalPos = this.GetPosition();
         this.health = 10;
 
-        sprite = new FAnimatedSprite("spaceGhost/spaceGhost");
-        sprite.addAnimation(new FAnimation("idle", new int[] { 1 }, animSpeed));
-        sprite.addAnimation(new FAnimation("chase", new int[] { 2 }, animSpeed, true));
-        sprite.addAnimation(new FAnimation("stun", new int[] { 3 }, animSpeed, true));
+        sprite = new FAnimatedSprite("spaceGhost1/spaceGhost1");
+        sprite.addAnimation(new FAnimation("idle", new int[] { 1,2,3,4 }, animSpeed));
+        sprite.addAnimation(new FAnimation("chase", new int[] { 5,6,7,8 }, animSpeed, true));
+        sprite.addAnimation(new FAnimation("stun", new int[] { 9 }, animSpeed, true));
 
         sprite.play("idle");
         currentState = State.IDLE;
@@ -78,7 +78,7 @@ public class SpaceGhost : BaseGameObject
                 {
                     Vector2 normVect = playerRelativePos.normalized;
                     x -= normVect.x * UnityEngine.Time.deltaTime * chaseSpeed;
-                    if (normVect.x < 0)
+                    if (normVect.x > 0)
                         sprite.scaleX = -1;
                     else
                         sprite.scaleX = 1;

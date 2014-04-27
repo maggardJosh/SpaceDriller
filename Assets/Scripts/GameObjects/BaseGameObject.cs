@@ -46,7 +46,9 @@ public class BaseGameObject : FContainer
         this.health -= damageAmount;
         lastDamageCounter = 0;
         for (int i = 0; i < damageAmount; i++)
-            Futile.stage.AddChild(new DamageIndicator(this.GetPosition()));
+            Futile.stage.AddChild(new DamageIndicator(this.GetPosition() ));
+        if (damageAmount == 0)
+            Futile.stage.AddChild(new DamageIndicator(this.GetPosition(), false));
         if (this.health <= 0)
             this.die();
     }

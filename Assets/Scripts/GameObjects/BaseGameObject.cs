@@ -10,6 +10,8 @@ public class BaseGameObject : FContainer
     public int health = 2;
     public int damage = 1;
 
+    public float lastDamageCounter = 1;
+
     public BaseGameObject()
     {
 
@@ -30,6 +32,8 @@ public class BaseGameObject : FContainer
     protected virtual void Update()
     {
         isAlive = !C.transitioning;
+        if (lastDamageCounter < 3)
+            lastDamageCounter += UnityEngine.Time.deltaTime;
     }
 
     public virtual void setWorld(World world)
@@ -40,6 +44,7 @@ public class BaseGameObject : FContainer
     protected void takeDamage(int damageAmount)
     {
         this.health -= damageAmount;
+        lastDamageCounter = 0;
         for (int i = 0; i < damageAmount; i++)
             Futile.stage.AddChild(new DamageIndicator(this.GetPosition()));
         if (this.health <= 0)

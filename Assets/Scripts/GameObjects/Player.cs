@@ -23,6 +23,7 @@ public class Player : BaseGameObject
 
     private FAnimatedSprite sprite;
 
+    public float weaponDamageRate = .1f;
     bool isFacingLeft = false;
     float speed = 200.0f;
     float stunCount = 0;            //If this is above zero we've been stunned and shouldn't move
@@ -82,6 +83,7 @@ public class Player : BaseGameObject
         this.AddChild(sprite);
         this.AddChild(sparkParticleSystem);
 
+        this.damage = 1;
     }
 
     int jumpsLeft = 1;
@@ -256,6 +258,20 @@ public class Player : BaseGameObject
     public bool isAttackingDown()
     {
         return currentAnimState == AnimState.FALL_ATTACK_DOWN;
+    }
+    public bool isAttackingRight()
+    {
+        return (stunCount <= 0) && (currentAnimState == AnimState.RUN || currentAnimState == AnimState.IDLE || currentAnimState == AnimState.JUMP || currentAnimState == AnimState.FALL) && !isFacingLeft && isAttackDown();
+    }
+
+    public bool isAttackingLeft()
+    {
+        return (stunCount <= 0) && (currentAnimState == AnimState.RUN || currentAnimState == AnimState.IDLE || currentAnimState == AnimState.JUMP || currentAnimState == AnimState.FALL) && isFacingLeft && isAttackDown();
+    }
+
+    public bool isAttackingUp()
+    {
+        return (currentAnimState == AnimState.FALL_ATTACK_UP || currentAnimState == AnimState.IDLE_ATTACK_UP || currentAnimState == AnimState.JUMP_ATTACK_UP || currentAnimState == AnimState.RUN_ATTACK_UP);
     }
 
     #region moveFunctions

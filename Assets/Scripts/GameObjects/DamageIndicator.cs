@@ -33,7 +33,7 @@ using UnityEngine;
         }
         public void Update()
         {
-            RXDebug.Log(this.GetPosition());
+            
             this.x += xVel * UnityEngine.Time.deltaTime;
             this.y += yVel * UnityEngine.Time.deltaTime;
             this.alpha -= 1.0f * UnityEngine.Time.deltaTime;

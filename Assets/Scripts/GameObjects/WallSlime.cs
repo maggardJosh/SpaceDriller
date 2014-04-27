@@ -133,14 +133,29 @@ public class WallSlime : BaseGameObject
                 break;
         }
         Vector2 playerRelativePos = this.GetPosition() - world.p.GetPosition();
-        if (playerRelativePos.sqrMagnitude < (sprite.width * sprite.width) / 2)
+        if (playerRelativePos.sqrMagnitude < (sprite.width * sprite.width))
         {
             if (world.p.isAttackingDown() && world.p.yVel < 0 && world.p.y > this.y)
             {
-
                 world.p.bounce();
-                this.takeDamage(world.p.damage);
+                if (this.lastDamageCounter > world.p.weaponDamageRate)
+                {
+                    this.takeDamage(world.p.damage);
+                }
 
+            }
+            else if (world.p.isAttackingRight() && world.p.x < this.x && world.p.y > this.y - sprite.height / 2 && world.p.y < this.y + sprite.height / 2 && this.lastDamageCounter > world.p.weaponDamageRate)
+            {
+                    this.takeDamage(world.p.damage);
+            }
+            else if (world.p.isAttackingLeft() && world.p.x > this.x && world.p.y > this.y - sprite.height / 2 && world.p.y < this.y + sprite.height / 2 && this.lastDamageCounter > world.p.weaponDamageRate)
+            {
+                    this.takeDamage(world.p.damage);
+            }
+
+            else if (world.p.isAttackingUp() && world.p.y < this.y && world.p.x < this.x + sprite.width / 2 && world.p.x > this.x - sprite.width / 2 && this.lastDamageCounter > world.p.weaponDamageRate)
+            {
+                    this.takeDamage(world.p.damage);
             }
             else
                 if (playerRelativePos.sqrMagnitude < (sprite.width * sprite.width) / 5)

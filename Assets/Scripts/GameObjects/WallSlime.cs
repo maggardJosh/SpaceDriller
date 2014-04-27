@@ -32,8 +32,8 @@ public class WallSlime : BaseGameObject
 
         sprite = new FAnimatedSprite("wallSlime/wallSlime");
         sprite.addAnimation(new FAnimation("idle", new int[] { 1 }, 100));
-        sprite.addAnimation(new FAnimation("start_launch", new int[] { 1, 2, 3, 4, 5, 6 }, landAnimSpeed, false));
-        sprite.addAnimation(new FAnimation("launching", new int[] { 6 }, 100, true));
+        sprite.addAnimation(new FAnimation("start_launch", new int[] { 1, 2, 3, }, landAnimSpeed, false));
+        sprite.addAnimation(new FAnimation("launching", new int[] { 4,5,6 }, 100, false));
         sprite.addAnimation(new FAnimation("landing", new int[] { 8, 9, 10, 11, 12 }, landAnimSpeed, false));
 
         sprite.play("idle");

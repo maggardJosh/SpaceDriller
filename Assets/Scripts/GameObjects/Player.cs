@@ -49,6 +49,7 @@ public class Player : BaseGameObject
 
     public Player()
     {
+        health = 8;
         sparkParticleSystem = new FParticleSystem(100);
         sparkParticleDefinition = new FParticleDefinition(C.whiteElement);
         sparkParticleDefinition.startColor = Color.yellow;
@@ -363,6 +364,9 @@ public class Player : BaseGameObject
             else
                 xVel = 3;
             yVel = jumpForce / 2;
+
+            this.health -= myObject.damage;
+            healthBar.setHealth(this.health);
         }
     }
 
@@ -371,6 +375,11 @@ public class Player : BaseGameObject
         yVel = jumpForce * .8f;
         forceBounce = true;
       
+    }
+    HealthBar healthBar;
+    public void setHealthBar(HealthBar hb)
+    {
+        this.healthBar = hb;
     }
 
     private void checkDown(float yMove)

@@ -14,7 +14,13 @@ public class InGamePage : FPage
         world = new World();
         Futile.stage.AddChild(world);
         world.loadMap("testMap");
-        world.spawnPlayer(new Player(), "topDoor");
+        Player p = new Player();
+        world.spawnPlayer(p, "topDoor");
+        HealthBar hb = new HealthBar();
+        hb.y = (int)(Futile.screen.halfHeight - hb.Height / 2 - 10);
+        hb.x = (int)(-Futile.screen.halfWidth + hb.Width / 2 + 10);
+        C.getCameraInstance().AddChild(hb);
+        p.setHealthBar(hb);
     }
 
 }

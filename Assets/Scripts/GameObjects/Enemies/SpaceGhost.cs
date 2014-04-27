@@ -52,14 +52,14 @@ public class SpaceGhost : BaseGameObject
     {
         base.Update();
         Vector2 playerRelativePos = this.GetPosition() - world.p.GetPosition();
-        switch(currentState)
+        switch (currentState)
         {
             case State.IDLE:
                 sprite.play("idle");
                 if (Go.tweensWithTarget(this).Count == 0)       //Not moving around
                 {
-                    Vector2 newPosition = originalPos + new Vector2(RXRandom.Float() * maxRandomMeander - maxRandomMeander/2, RXRandom.Float() * maxRandomMeander - maxRandomMeander/2);
-                    Go.to(this, meanderTime, new TweenConfig().setDelay(RXRandom.Float()*(maxMeanderDelay-minMeanderDelay) + minMeanderDelay).floatProp("x", newPosition.x).floatProp("y", newPosition.y).setEaseType(EaseType.CubicInOut));
+                    Vector2 newPosition = originalPos + new Vector2(RXRandom.Float() * maxRandomMeander - maxRandomMeander / 2, RXRandom.Float() * maxRandomMeander - maxRandomMeander / 2);
+                    Go.to(this, meanderTime, new TweenConfig().setDelay(RXRandom.Float() * (maxMeanderDelay - minMeanderDelay) + minMeanderDelay).floatProp("x", newPosition.x).floatProp("y", newPosition.y).setEaseType(EaseType.CubicInOut));
                 }
                 if (playerRelativePos.sqrMagnitude <= (world.map.tileWidth * world.map.tileWidth) * tilesAwayTakeNotice * 2)
                 {
@@ -113,41 +113,60 @@ public class SpaceGhost : BaseGameObject
                 world.p.bounce();
                 if (this.lastDamageCounter > world.p.weaponDamageRate)
                 {
-                    this.takeDamage(world.p.damage*2);
+                    this.takeDamage(world.p.damage * 2);
                     if (knockBackCount == 0)
                         currentState = State.KNOCKBACK;
-                    
+
                     knockBackVel = playerRelativePos.normalized * knockbackStrength;
                 }
 
             }
             else if (world.p.isAttackingRight() && world.p.x < this.x && world.p.y > this.y - sprite.height / 2 && world.p.y < this.y + sprite.height / 2 && this.lastDamageCounter > world.p.weaponDamageRate)
             {
-                    this.takeDamage(world.p.damage);
-                    if (knockBackCount == 0)
-                        currentState = State.KNOCKBACK;
-                    knockBackVel = playerRelativePos.normalized * knockbackStrength;
+                this.takeDamage(world.p.damage);
+                if (knockBackCount == 0)
+                    currentState = State.KNOCKBACK;
+                knockBackVel = playerRelativePos.normalized * knockbackStrength;
             }
             else if (world.p.isAttackingLeft() && world.p.x > this.x && world.p.y > this.y - sprite.height / 2 && world.p.y < this.y + sprite.height / 2 && this.lastDamageCounter > world.p.weaponDamageRate)
             {
-                    this.takeDamage(world.p.damage);
-                    if (knockBackCount == 0)
-                        currentState = State.KNOCKBACK;
-                    knockBackVel = playerRelativePos.normalized * knockbackStrength;
+                this.takeDamage(world.p.damage);
+                if (knockBackCount == 0)
+                    currentState = State.KNOCKBACK;
+                knockBackVel = playerRelativePos.normalized * knockbackStrength;
             }
 
             else if (world.p.isAttackingUp() && world.p.y < this.y && world.p.x < this.x + Mathf.Abs(sprite.width) / 2 && world.p.x > this.x - Mathf.Abs(sprite.width) / 2 && this.lastDamageCounter > world.p.weaponDamageRate)
             {
-                    this.takeDamage(world.p.damage);
-                    if (knockBackCount == 0)
-                        currentState = State.KNOCKBACK;
-                    knockBackVel = playerRelativePos.normalized * knockbackStrength;
+                this.takeDamage(world.p.damage);
+                if (knockBackCount == 0)
+                    currentState = State.KNOCKBACK;
+                knockBackVel = playerRelativePos.normalized * knockbackStrength;
             }
             else
                 if (playerRelativePos.sqrMagnitude < (sprite.width * sprite.width) / 5)
                 {
-                    world.p.takeDamage(this);
+                    if (currentState == State.KNOCKBACK)
+                    {
+
+                      //  this.x = world.p.GetPosition().x + playerRelativePos.normalized.x * Mathf.Abs(sprite.width / 5);
+                       // this.y = world.p.GetPosition().y + playerRelativePos.normalized.y * Mathf.Abs(sprite.width / 5);
+
+                    }
+                    else
+                        world.p.takeDamage(this);
                 }
+
+            if (currentState == State.KNOCKBACK)
+            {
+                if (playerRelativePos.sqrMagnitude < (sprite.width * sprite.width))
+                {
+
+                    this.x = world.p.GetPosition().x + playerRelativePos.normalized.x * Mathf.Abs(sprite.width );
+                    this.y = world.p.GetPosition().y + playerRelativePos.normalized.y * Mathf.Abs(sprite.width );
+
+                }
+            }
         }
     }
 
@@ -156,10 +175,10 @@ public class SpaceGhost : BaseGameObject
         if (currentState == State.IDLE)
             return;
         Vector2 diff = this.GetPosition() - otherGhost.GetPosition();
-        if (diff.sqrMagnitude < (this.sprite.width * sprite.width)/2)
+        if (diff.sqrMagnitude < (this.sprite.width * sprite.width) / 2)
         {
-            this.x = Mathf.Lerp(this.x, otherGhost.GetPosition().x + diff.normalized.x * Mathf.Abs(sprite.width/2), .2f);
-            this.y = Mathf.Lerp(this.y, otherGhost.GetPosition().y + diff.normalized.y * Mathf.Abs(sprite.width/2), .2f);
+            this.x = Mathf.Lerp(this.x, otherGhost.GetPosition().x + diff.normalized.x * Mathf.Abs(sprite.width / 2), .2f);
+            this.y = Mathf.Lerp(this.y, otherGhost.GetPosition().y + diff.normalized.y * Mathf.Abs(sprite.width / 2), .2f);
         }
     }
 }

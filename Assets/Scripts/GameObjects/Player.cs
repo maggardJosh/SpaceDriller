@@ -23,7 +23,7 @@ public class Player : BaseGameObject
 
     private FAnimatedSprite sprite;
 
-    public float weaponDamageRate = .1f;
+    public float weaponDamageRate = .5f;
     bool isFacingLeft = false;
     float speed = 200.0f;
     float stunCount = 0;            //If this is above zero we've been stunned and shouldn't move

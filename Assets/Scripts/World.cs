@@ -121,6 +121,25 @@ public class World : FContainer
             }
         }
 
+        for (int i = 0; i < enemies.Count; i++)
+        {
+            if (enemies[i].health <= 0)
+            {
+                enemies.RemoveAt(i);
+                i--;
+            }
+            if (enemies[i] is SpaceGhost)
+            {
+                for (int j = i + 1; j < enemies.Count; j++)
+                {
+                    if (enemies[j] is SpaceGhost)
+                    {
+                        ((SpaceGhost)enemies[i]).checkOtherGhost((SpaceGhost)enemies[j]);
+                    }
+                }
+            }
+        }
+
     }
 
 
@@ -138,6 +157,9 @@ public class World : FContainer
                         break;
                     case 3:
                         addJumpBoots(node);
+                        break;
+                    case 4:
+                        addSpaceGhost(node);
                         break;
                 }
             }
@@ -186,6 +208,14 @@ public class World : FContainer
             pickups.Add(boot);
             playerLayer.AddChild(boot);
         }
+    }
+
+    private void addSpaceGhost(XMLNode node)
+    {
+        SpaceGhost ghost = new SpaceGhost(new Vector2(int.Parse(node.attributes["x"]) + map.tileWidth / 2, -int.Parse(node.attributes["y"]) + map.tileHeight / 2));
+        ghost.setWorld(this);
+        enemies.Add(ghost);
+        playerLayer.AddChild(ghost);
     }
 
     public void spawnPlayer(Player p, String toDoor)

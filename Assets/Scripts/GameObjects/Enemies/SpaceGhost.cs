@@ -1,0 +1,150 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using UnityEngine;
+
+public class SpaceGhost : BaseGameObject
+{
+    private enum State
+    {
+        IDLE,
+        CHASE,
+        KNOCKBACK
+    }
+
+    State currentState;
+
+    FAnimatedSprite sprite;
+
+    Vector2 originalPos;
+    int animSpeed = 100;
+    Vector2 knockBackVel;
+    float chaseSpeed = 40;
+
+    int tilesAwayTakeNotice = 10;
+
+    public SpaceGhost(Vector2 position, bool superGhost = false)
+    {
+
+        this.SetPosition(position);
+        originalPos = this.GetPosition();
+        this.health = 10;
+
+        sprite = new FAnimatedSprite("spaceGhost/spaceGhost");
+        sprite.addAnimation(new FAnimation("idle", new int[] { 1 }, animSpeed));
+        sprite.addAnimation(new FAnimation("chase", new int[] { 2 }, animSpeed, true));
+        sprite.addAnimation(new FAnimation("stun", new int[] { 3 }, animSpeed, true));
+
+        sprite.play("idle");
+        currentState = State.IDLE;
+        this.AddChild(sprite);
+    }
+
+    float maxRandomMeander = 32 * 5;
+    float meanderTime = 4;
+    float minMeanderDelay = .5f;
+    float maxMeanderDelay = 3.0f;
+    float knockbackStrength = 300;
+
+    protected override void Update()
+    {
+        base.Update();
+        Vector2 playerRelativePos = this.GetPosition() - world.p.GetPosition();
+        switch(currentState)
+        {
+            case State.IDLE:
+                sprite.play("idle");
+                if (Go.tweensWithTarget(this).Count == 0)       //Not moving around
+                {
+                    Vector2 newPosition = originalPos + new Vector2(RXRandom.Float() * maxRandomMeander - maxRandomMeander/2, RXRandom.Float() * maxRandomMeander - maxRandomMeander/2);
+                    Go.to(this, meanderTime, new TweenConfig().setDelay(RXRandom.Float()*(maxMeanderDelay-minMeanderDelay) + minMeanderDelay).floatProp("x", newPosition.x).floatProp("y", newPosition.y).setEaseType(EaseType.CubicInOut));
+                }
+                if (playerRelativePos.sqrMagnitude <= (world.map.tileWidth * world.map.tileWidth) * tilesAwayTakeNotice * 2)
+                {
+                    Go.killAllTweensWithTarget(this);
+                    currentState = State.CHASE;
+                }
+                break;
+            case State.CHASE:
+                sprite.play("chase");
+                if (playerRelativePos.sqrMagnitude > (world.map.tileWidth * world.map.tileWidth) * tilesAwayTakeNotice * 2)
+                {
+                    currentState = State.IDLE;
+                    originalPos = this.GetPosition();       //Set new home point
+                }
+                else
+                {
+                    Vector2 normVect = playerRelativePos.normalized;
+                    x -= normVect.x * UnityEngine.Time.deltaTime * chaseSpeed;
+                    if (normVect.x < 0)
+                        sprite.scaleX = -1;
+                    else
+                        sprite.scaleX = 1;
+                    y -= normVect.y * UnityEngine.Time.deltaTime * chaseSpeed;
+                }
+                break;
+            case State.KNOCKBACK:
+                sprite.play("stun");
+                x += knockBackVel.x * UnityEngine.Time.deltaTime;
+                y += knockBackVel.y * UnityEngine.Time.deltaTime;
+                knockBackVel *= .8f;
+                if (knockBackVel.sqrMagnitude < 5)
+                    currentState = State.IDLE;
+
+                break;
+        }
+
+        if (playerRelativePos.sqrMagnitude < (sprite.width * sprite.width))
+        {
+            RXDebug.Log(sprite.width);
+            if (world.p.isAttackingDown() && world.p.yVel < 0 && world.p.y > this.y && world.p.x < this.x + Mathf.Abs(sprite.width) / 2 && world.p.x > this.x - Mathf.Abs(sprite.width) / 2)
+            {
+                world.p.bounce();
+                if (this.lastDamageCounter > world.p.weaponDamageRate)
+                {
+                    this.takeDamage(world.p.damage*2);
+                    currentState = State.KNOCKBACK;
+                    knockBackVel = playerRelativePos.normalized * knockbackStrength;
+                }
+
+            }
+            else if (world.p.isAttackingRight() && world.p.x < this.x && world.p.y > this.y - sprite.height / 2 && world.p.y < this.y + sprite.height / 2 && this.lastDamageCounter > world.p.weaponDamageRate)
+            {
+                    this.takeDamage(world.p.damage);
+                    currentState = State.KNOCKBACK;
+                    knockBackVel = playerRelativePos.normalized * knockbackStrength;
+            }
+            else if (world.p.isAttackingLeft() && world.p.x > this.x && world.p.y > this.y - sprite.height / 2 && world.p.y < this.y + sprite.height / 2 && this.lastDamageCounter > world.p.weaponDamageRate)
+            {
+                    this.takeDamage(world.p.damage);
+                    currentState = State.KNOCKBACK;
+                    knockBackVel = playerRelativePos.normalized * knockbackStrength;
+            }
+
+            else if (world.p.isAttackingUp() && world.p.y < this.y && world.p.x < this.x + Mathf.Abs(sprite.width) / 2 && world.p.x > this.x - Mathf.Abs(sprite.width) / 2 && this.lastDamageCounter > world.p.weaponDamageRate)
+            {
+                    this.takeDamage(world.p.damage);
+                    currentState = State.KNOCKBACK;
+                    knockBackVel = playerRelativePos.normalized * knockbackStrength;
+            }
+            else
+                if (playerRelativePos.sqrMagnitude < (sprite.width * sprite.width) / 5)
+                {
+                    world.p.takeDamage(this);
+                }
+        }
+    }
+
+    public void checkOtherGhost(SpaceGhost otherGhost)
+    {
+        if (currentState == State.IDLE)
+            return;
+        Vector2 diff = this.GetPosition() - otherGhost.GetPosition();
+        if (diff.sqrMagnitude < (this.sprite.width * sprite.width)/2)
+        {
+            this.x = Mathf.Lerp(this.x, otherGhost.GetPosition().x + diff.normalized.x * Mathf.Abs(sprite.width/2), .2f);
+            this.y = Mathf.Lerp(this.y, otherGhost.GetPosition().y + diff.normalized.y * Mathf.Abs(sprite.width/2), .2f);
+        }
+    }
+}

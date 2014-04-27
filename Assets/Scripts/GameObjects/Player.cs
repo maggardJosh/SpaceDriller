@@ -23,7 +23,7 @@ public class Player : BaseGameObject
 
     private FAnimatedSprite sprite;
 
-    public float weaponDamageRate = .5f;
+    public float weaponDamageRate = .1f;
     bool isFacingLeft = false;
     float speed = 200.0f;
     float stunCount = 0;            //If this is above zero we've been stunned and shouldn't move
@@ -416,6 +416,11 @@ public class Player : BaseGameObject
     public void setOverheatBar(OverheatBar ob)
     {
         this.overheatBar = ob;
+    }
+
+    public void playIdle()
+    {
+        sprite.play(( isFacingLeft ? "left" : "right" ) + "IDLE");
     }
 
     private void checkDown(float yMove)

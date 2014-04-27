@@ -25,6 +25,7 @@ public class Pickup : FSprite
     public void pickup(Player p)
     {
         pickupAction(p);
+        p.playIdle();
         C.transitioning = true;
         Go.killAllTweensWithTarget(this);
         this.RemoveFromContainer();

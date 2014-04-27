@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using UnityEngine;
 
 public static class C
 {
@@ -11,6 +12,9 @@ public static class C
 
     public static bool transitioning = false;
     public const float transitioningTime = .5f;
+
+    public const float PIOVER180 = Mathf.PI / 180.0f;
+    public const float PIOVER180_INV = 180.0f / Mathf.PI;
 
     private static FCamObject camera;
     public static FCamObject getCameraInstance()

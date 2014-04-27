@@ -68,7 +68,9 @@ public class HealthBar : FContainer
                     Go.killAllTweensWithTarget(animHealthCubes[i]);
                     animHealthCubes[i].SetPosition(healthCubes[i].GetPosition());
                     animHealthCubes[i].alpha = 1;
-                    Go.to(animHealthCubes[i], 1.0f, new TweenConfig().floatProp("y", animHealthCubes[i].y - 30).floatProp("alpha", 0).floatProp("x", animHealthCubes[i].x + RXRandom.Float() * 20 - 10).setEaseType(EaseType.QuadOut));
+                    animHealthCubes[i].scale = healthCubes[i].scale;
+                    animHealthCubes[i].color = Color.white;
+                    Go.to(animHealthCubes[i], 1.0f, new TweenConfig().floatProp("scale", 0).floatProp("alpha", 0).setEaseType(EaseType.CircInOut));
                 }
             }
         }

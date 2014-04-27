@@ -176,7 +176,7 @@ public class Player : BaseGameObject
             if (isAttackDown() && !isOverheated)
             {
                 spawnSparks();
-                overheat += UnityEngine.Time.deltaTime * .3f;
+                overheat += UnityEngine.Time.deltaTime * .25f;
                 if (overheat >= 1)
                 {
                     overheat = 1;
@@ -185,7 +185,7 @@ public class Player : BaseGameObject
             }
             else if (isOverheated)
             {
-                overheat -= UnityEngine.Time.deltaTime * .2f;
+                overheat -= UnityEngine.Time.deltaTime * .5f;
                 if (overheat <= 0)
                 {
                     isOverheated = false;
@@ -194,7 +194,7 @@ public class Player : BaseGameObject
             else if (!isAttackDown())
             {
                 if (overheat > 0)
-                    overheat -= UnityEngine.Time.deltaTime * .3f;
+                    overheat -= UnityEngine.Time.deltaTime * .5f;
                 else
                     overheat = 0;
             }
@@ -286,7 +286,7 @@ public class Player : BaseGameObject
 
     public bool isAttackingDown()
     {
-        return !isOverheated && currentAnimState == AnimState.FALL_ATTACK_DOWN && isAttackDown();
+        return !isOverheated && (stunCount <= 0) && currentAnimState == AnimState.FALL_ATTACK_DOWN && isAttackDown();
     }
     public bool isAttackingRight()
     {

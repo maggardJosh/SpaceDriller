@@ -25,6 +25,9 @@ public class Player : BaseGameObject
 
     bool isFacingLeft = false;
     float speed = 200.0f;
+    float stunCount = 0;            //If this is above zero we've been stunned and shouldn't move
+    float invulnerableCount = 0;    //While this is above zero we can't take damage
+    float xVel = 0;
     float yVel = 0;
     float gravity = -28;
     float maxYVel = -14;
@@ -32,7 +35,6 @@ public class Player : BaseGameObject
     float jumpForce = 8;
 
     int animSpeed = 100;
-    bool isAttacking = false;
 
     FParticleSystem sparkParticleSystem;
     FParticleDefinition sparkParticleDefinition;
@@ -57,6 +59,8 @@ public class Player : BaseGameObject
         sprite = new FAnimatedSprite("player");
         sprite.addAnimation(new FAnimation("leftIDLE", new int[] { 16 }, animSpeed, true));
         sprite.addAnimation(new FAnimation("rightIDLE", new int[] { 15 }, animSpeed, true));
+        sprite.addAnimation(new FAnimation("leftstun", new int[] { 14 }, animSpeed, true));
+        sprite.addAnimation(new FAnimation("rightstun", new int[] { 13 }, animSpeed, true));
         sprite.addAnimation(new FAnimation("leftRUN", new int[] { 5, 6, 7, 8 }, animSpeed, true));
         sprite.addAnimation(new FAnimation("rightRUN", new int[] { 1, 2, 3, 4 }, animSpeed, true));
         sprite.addAnimation(new FAnimation("leftJUMP", new int[] { 11 }, animSpeed, true));
@@ -95,80 +99,112 @@ public class Player : BaseGameObject
         float yMove = 0;
 
         yVel += gravity * UnityEngine.Time.deltaTime;
-        if (Input.GetKeyDown(KeyCode.Space))            //Space has been pressed. Start jumping
+        if (stunCount <= 0)
         {
-            if (grounded)
+
+            if (Input.GetKeyDown(KeyCode.Space))            //Space has been pressed. Start jumping
             {
-                yVel = jumpForce;
-                //State to jump
-            }
-            else
-            {
-                if (jumpsLeft > 0)
+                if (grounded)
                 {
-                    jumpsLeft--;
                     yVel = jumpForce;
+                    //State to jump
+                }
+                else
+                {
+                    if (jumpsLeft > 0)
+                    {
+                        jumpsLeft--;
+                        yVel = jumpForce;
+                    }
                 }
             }
-        }
-        else if (!Input.GetKey(KeyCode.Space))       //Space is not held down... Let the player stop jumping if currently jumping
-        {
+            else if (!Input.GetKey(KeyCode.Space))       //Space is not held down... Let the player stop jumping if currently jumping
+            {
+                if (yVel > 0)
+                    yVel *= .4f;
+            }
             if (yVel > 0)
-                yVel *= .4f;
-        }
-        if (yVel > 0)
-            currentAnimState = AnimState.JUMP;
-        else
-            if (yVel < 0 && !grounded)
+                currentAnimState = AnimState.JUMP;
+            else
+                if (yVel < 0 && !grounded)
+                {
+                    currentAnimState = AnimState.FALL;
+                    if (Input.GetKey(KeyCode.S))
+                        currentAnimState = AnimState.FALL_ATTACK_DOWN;
+                }
+
+            if (Input.GetKey(KeyCode.A))
             {
-                currentAnimState = AnimState.FALL;
-                if (Input.GetKey(KeyCode.S))
-                    currentAnimState = AnimState.FALL_ATTACK_DOWN;
+                xMove = -Time.deltaTime * speed;
+                isFacingLeft = true;
             }
-        yVel = Mathf.Clamp(yVel, maxYVel, jumpForce);
-        yMove = yVel;
-        if (Input.GetKey(KeyCode.A))
+            else
+                if (Input.GetKey(KeyCode.D))
+                {
+                    xMove = Time.deltaTime * speed;
+                    isFacingLeft = false;
+                }
+            if (grounded)
+                currentAnimState = AnimState.IDLE;
+            if (currentAnimState == AnimState.IDLE && xMove != 0)
+                currentAnimState = AnimState.RUN;
+            if (Input.GetKey(KeyCode.W))
+            {
+                if (currentAnimState == AnimState.IDLE)
+                    currentAnimState = AnimState.IDLE_ATTACK_UP;
+                else if (currentAnimState == AnimState.RUN)
+                    currentAnimState = AnimState.RUN_ATTACK_UP;
+                else if (currentAnimState == AnimState.JUMP)
+                    currentAnimState = AnimState.JUMP_ATTACK_UP;
+                else if (currentAnimState == AnimState.FALL)
+                    currentAnimState = AnimState.FALL_ATTACK_UP;
+            }
+            if (isAttackDown())
+                spawnSparks();
+        }
+        else
         {
-            xMove = -Time.deltaTime * speed;
-            isFacingLeft = true;
+            if (xVel == 0)
+                stunCount -= UnityEngine.Time.deltaTime;
+
+            if (stunCount <= 0)
+                invulnerableCount = C.stunInvulnTime;       //Done being stunned now have control and be invulnerable
         }
-        else
-            if (Input.GetKey(KeyCode.D))
-            {
-                xMove = Time.deltaTime * speed;
-                isFacingLeft = false;
-            }
+        yVel = Mathf.Clamp(yVel, maxYVel, jumpForce);
+        if (xVel != 0)
+            xMove = xVel;
 
-
-
-        if (Input.GetKeyDown(KeyCode.U))
-            isAttacking = !isAttacking;
+        yMove = yVel;
 
 
         this.grounded = false;
         tryMove(xMove, yMove);
 
-        if (currentAnimState == AnimState.IDLE && xMove != 0)
-            currentAnimState = AnimState.RUN;
-
-        if (Input.GetKey(KeyCode.W))
+        if (stunCount > 0)
         {
-            if (currentAnimState == AnimState.IDLE)
-                currentAnimState = AnimState.IDLE_ATTACK_UP;
-            else if (currentAnimState == AnimState.RUN)
-                currentAnimState = AnimState.RUN_ATTACK_UP;
-            else if (currentAnimState == AnimState.JUMP)
-                currentAnimState = AnimState.JUMP_ATTACK_UP;
-            else if (currentAnimState == AnimState.FALL)
-                currentAnimState = AnimState.FALL_ATTACK_UP;
+            sprite.alpha = 1;
+            sprite.play((isFacingLeft ? "left" : "right") + "stun");
         }
-        if (isAttacking)
-            spawnSparks();
-
-        sprite.play((isFacingLeft ? "left" : "right") + currentAnimState);
+        else
+        {
+            sprite.alpha = 1;
+            sprite.play((isFacingLeft ? "left" : "right") + currentAnimState);
+        }
+        if (invulnerableCount > 0)
+        {
+            invulnerableCount -= UnityEngine.Time.deltaTime;
+            sprite.alpha = ((invulnerableCount * 1000) % 10 < 5) ? 0 : 1;
+        }
 
         sparkParticleSystem.x = -x;
         sparkParticleSystem.y = -y;
+
+
+    }
+
+    private bool isAttackDown()
+    {
+        return UnityEngine.Input.GetKey(KeyCode.U);
     }
 
     private void spawnSparks()
@@ -191,7 +227,8 @@ public class Player : BaseGameObject
         {
             sparkParticleDefinition.y -= 10;
             angle -= 90;
-        }else
+        }
+        else
             if (isFacingLeft)
                 sparkParticleDefinition.x -= 15;
             else
@@ -287,6 +324,20 @@ public class Player : BaseGameObject
         }
     }
 
+    public void takeDamage(BaseGameObject myObject)
+    {
+        if (stunCount <= 0 && invulnerableCount <= 0)
+        {
+
+            stunCount = .4f;
+            if (myObject.x < this.x)
+                xVel = 3;
+            else
+                xVel = -3;
+            yVel = jumpForce / 2;
+        }
+    }
+
     private void checkDown(float yMove)
     {
         while (yMove > 0)
@@ -303,9 +354,9 @@ public class Player : BaseGameObject
             {
                 this.y = -(newTileY) * world.map.tileHeight + sprite.height / 2;
                 this.grounded = true;
+                this.xVel = 0;
                 this.yVel = 0;
                 this.jumpsLeft = 1;
-                currentAnimState = AnimState.IDLE;
                 break;
             }
         }

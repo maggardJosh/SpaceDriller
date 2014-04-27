@@ -13,6 +13,8 @@ public static class C
     public static bool transitioning = false;
     public const float transitioningTime = .5f;
 
+    public const float stunInvulnTime = 1.0f;           //Time after stun that you're invulnerable
+
     public const float PIOVER180 = Mathf.PI / 180.0f;
     public const float PIOVER180_INV = 180.0f / Mathf.PI;
 

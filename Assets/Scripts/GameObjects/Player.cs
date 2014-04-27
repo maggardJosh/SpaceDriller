@@ -65,8 +65,8 @@ public class Player : BaseGameObject
         sprite = new FAnimatedSprite("player");
         sprite.addAnimation(new FAnimation("leftIDLE", new int[] { 16 }, animSpeed, true));
         sprite.addAnimation(new FAnimation("rightIDLE", new int[] { 15 }, animSpeed, true));
-        sprite.addAnimation(new FAnimation("leftstun", new int[] { 14 }, animSpeed, true));
-        sprite.addAnimation(new FAnimation("rightstun", new int[] { 13 }, animSpeed, true));
+        sprite.addAnimation(new FAnimation("leftstun", new int[] { 32, 14 }, animSpeed / 100, true));
+        sprite.addAnimation(new FAnimation("rightstun", new int[] { 31, 13 }, animSpeed / 100, true));
         sprite.addAnimation(new FAnimation("leftRUN", new int[] { 5, 6, 7, 8 }, animSpeed, true));
         sprite.addAnimation(new FAnimation("rightRUN", new int[] { 1, 2, 3, 4 }, animSpeed, true));
         sprite.addAnimation(new FAnimation("leftJUMP", new int[] { 11 }, animSpeed, true));
@@ -221,7 +221,7 @@ public class Player : BaseGameObject
 
         if (stunCount > 0)
         {
-            sprite.alpha = 1;
+            sprite.alpha = .5f;
             sprite.play((isFacingLeft ? "left" : "right") + "stun");
         }
         else

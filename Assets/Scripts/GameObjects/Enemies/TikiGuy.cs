@@ -19,7 +19,7 @@ public class TikiGuy : BaseGameObject
         sprite.addAnimation(new FAnimation("active", new int[] { 5 }, 100, true));
         sprite.addAnimation(new FAnimation("breaking", new int[] { 1, 2, 3, 4 }, 100, false));
         sprite.play("idle");
-        this.health = 3;
+        this.health = 40;
     }
 
     public void goActive()

@@ -11,8 +11,8 @@ public static class C
     public const string SmallFont = "PressStart2Psmall";
     public const float disableMovementTime = .5f;
 
-    public const string startMap = "room1_1";
-    public const string startDoor = "tutorialDoor";
+    public const string startMap = "tutorial";
+    public const string startDoor = "startDoor";
 
     public static bool transitioning = false;
     public const float transitioningTime = .5f;

@@ -112,7 +112,7 @@ public class Tiki : BaseGameObject
             tikiGuys[i].checkCollision();
             if (tikiGuys[i].health <= 0)
             {
-                for (int j = i; j < tikiGuys.Count; j++)
+                for (int j = i+1; j < tikiGuys.Count; j++)
                 {
                     tikiGuys[j].moveDown(j-1);
                 }

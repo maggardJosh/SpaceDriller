@@ -14,7 +14,7 @@ public class TikiGuy : BaseGameObject
     public TikiGuy(Tiki tikiParent)
     {
         this.tikiParent = tikiParent;
-        sprite = new FAnimatedSprite("Tiki/tikiGuy" + (RXRandom.Int(NUM_TIKI_FACES) + 1).ToString());
+        sprite = new FAnimatedSprite("TikiGuy/tikiGuy" + (RXRandom.Int(NUM_TIKI_FACES) + 1).ToString());
         sprite.addAnimation(new FAnimation("idle", new int[] { 1 }, 100, true));
         sprite.addAnimation(new FAnimation("active", new int[] { 5 }, 100, true));
         sprite.addAnimation(new FAnimation("breaking", new int[] { 1, 2, 3, 4 }, 100, false));
@@ -134,6 +134,7 @@ public class TikiGuy : BaseGameObject
     protected override void die()
     {
         sprite.play("breaking", true);
+        Go.to(this, 1.0f, new TweenConfig().floatProp("alpha", 0));
 
     }
 }

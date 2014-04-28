@@ -129,8 +129,8 @@
   </object>
   <object name="leftDoor" type="Door" x="32" y="224" width="32" height="64">
    <properties>
-    <property name="toDoor" value=""/>
-    <property name="toMap" value=""/>
+    <property name="toDoor" value="rightDoor"/>
+    <property name="toMap" value="room1_4"/>
    </properties>
   </object>
   <object name="rightTopDoor" type="Door" x="800" y="256" width="32" height="64">

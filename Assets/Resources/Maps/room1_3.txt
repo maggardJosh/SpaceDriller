@@ -12,7 +12,7 @@
  <tileset firstgid="146" name="objects" tilewidth="32" tileheight="32">
   <image source="gfx/objects.png" width="384" height="32"/>
  </tileset>
- <layer name="BG" width="17" height="12">
+ <layer name="BG" width="17" height="12" visible="0">
   <data encoding="csv">
 137,130,91,86,104,108,136,107,115,143,112,91,127,95,139,142,111,
 133,115,95,138,85,125,113,137,90,98,122,127,131,131,116,85,118,
@@ -63,7 +63,7 @@
 145,145,145,145,145,145,145,145,0,0,0,0,0,0,0,0,0
 </data>
  </layer>
- <layer name="Objects" width="17" height="12" opacity="0.23">
+ <layer name="Objects" width="17" height="12" visible="0" opacity="0.23">
   <properties>
    <property name="draw" value="false"/>
   </properties>

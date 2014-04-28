@@ -84,14 +84,14 @@
 145,145,145,145,145,145,145,145,145,145,145,145,145,145,145,145,145,145,145,145,145,145,145,145,145,145,145,145,145,145,145,145,145,145,145,145,145,145,145,145,145,145,145,145,145
 </data>
  </layer>
- <objectgroup name="Doors" width="45" height="19" visible="0">
+ <objectgroup name="Doors" width="45" height="19">
   <object name="startDoor" type="Door" x="800" y="448" width="32" height="64">
    <properties>
     <property name="toDoor" value=""/>
     <property name="toMap" value=""/>
    </properties>
   </object>
-  <object name="startDoor" type="Door" x="128" y="544" width="64" height="32">
+  <object name="tutorialDoor" type="Door" x="128" y="544" width="64" height="32">
    <properties>
     <property name="toDoor" value="tutorialDoor"/>
     <property name="toMap" value="room1_1"/>

@@ -20,6 +20,10 @@ public class TutorialText
         C.getCameraInstance().AddChild(this.text);
     }
 
+    public void removeSelf()
+    {
+        text.RemoveFromContainer();
+    }
     public void checkPlayer(Player p)
     {
       

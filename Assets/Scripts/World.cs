@@ -122,6 +122,8 @@ public class World : FContainer
                 p.maxJumpsLeft = 1;
                 C.doorsBroken.Clear();
                 this.RemoveAllChildren();
+                foreach (TutorialText tut in tutorialList)
+                    tut.removeSelf();
                 loadMap(C.startMap);
                 spawnPlayer(p, C.startDoor);
                 p.setHealth(8);
@@ -140,7 +142,8 @@ public class World : FContainer
                 p.setDrillPower(C.lastSave.drillLevel);
                 p.maxJumpsLeft = C.lastSave.jumpBoots ? 2 : 1;
                 C.doorsBroken = new List<KeyValuePair<string, int>>(C.lastSave.openedDoors.AsEnumerable());
-
+                foreach (TutorialText tut in tutorialList)
+                    tut.removeSelf();
                 this.RemoveAllChildren();
                 loadMap(C.lastSave.mapName);
                 if (checkPointList.Count > 0)

@@ -112,11 +112,19 @@ public class Tiki : BaseGameObject
             tikiGuys[i].checkCollision();
             if (tikiGuys[i].health <= 0)
             {
-                for (int j = i+1; j < tikiGuys.Count; j++)
+                if (i == 0 && currentState == State.JUMPING)
                 {
-                    tikiGuys[j].moveDown(j-1);
+                    foreach (TikiGuy t in tikiGuys)
+                        t.y -= t.height;
+                    this.y += tikiGuys[0].height;
                 }
-                    tikiGuys.RemoveAt(i);
+                else
+                {
+                    for (int j = i + 1; j < tikiGuys.Count; j++)
+                        tikiGuys[j].moveDown(j - 1);
+                }
+
+                tikiGuys.RemoveAt(i);
                 --i;
                 continue;
             }

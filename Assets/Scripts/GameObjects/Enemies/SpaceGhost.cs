@@ -25,14 +25,14 @@ public class SpaceGhost : BaseGameObject
     float knockBackCountDelay = .3f;
     int tilesAwayTakeNotice = 10;
 
-    public SpaceGhost(Vector2 position, bool superGhost = false)
+    public SpaceGhost(Vector2 position, int level = 1)
     {
 
         this.SetPosition(position);
         originalPos = this.GetPosition();
         this.health = 10;
 
-        sprite = new FAnimatedSprite("spaceGhost1/spaceGhost1");
+        sprite = new FAnimatedSprite("spaceGhost1/spaceGhost" + level.ToString());
         sprite.addAnimation(new FAnimation("idle", new int[] { 1,2,3,4 }, animSpeed));
         sprite.addAnimation(new FAnimation("chase", new int[] { 5,6,7,8 }, animSpeed, true));
         sprite.addAnimation(new FAnimation("stun", new int[] { 9 }, animSpeed, true));

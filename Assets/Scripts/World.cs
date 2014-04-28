@@ -145,11 +145,15 @@ public class World : FContainer
 
     private void addObjects(FTmxMap map)
     {
+        pickups.Clear();
+        enemies.Clear();
         foreach (XMLNode node in map.objects)
         {
             if (node.attributes.ContainsKey("gid"))
             {
+
                 int frameNum = int.Parse(node.attributes["gid"]) - (map.getTilesetFirstIDForID(int.Parse(node.attributes["gid"])) - 1);
+
                 switch (frameNum)
                 {
                     case 2:
@@ -163,6 +167,12 @@ public class World : FContainer
                         break;
                     case 5:
                         addTiki(node);
+                        break;
+                    case 7:
+                        addDrill(node, 2);
+                        break;
+                    case 8:
+                        addDrill(node, 3);
                         break;
                 }
             }
@@ -210,6 +220,17 @@ public class World : FContainer
             JumpBoots boot = new JumpBoots(new Vector2(int.Parse(node.attributes["x"]) + map.tileWidth / 2, -int.Parse(node.attributes["y"]) + map.tileHeight / 2));
             pickups.Add(boot);
             playerLayer.AddChild(boot);
+        }
+    }
+
+    private void addDrill(XMLNode node, int level)
+    {
+        
+        if (p == null || p.drillLevel < level)
+        {
+            DrillPowerUp drill = new DrillPowerUp(new Vector2(int.Parse(node.attributes["x"]) + map.tileWidth / 2, -int.Parse(node.attributes["y"]) + map.tileHeight / 2), level);
+            pickups.Add(drill);
+            playerLayer.AddChild(drill);
         }
     }
 

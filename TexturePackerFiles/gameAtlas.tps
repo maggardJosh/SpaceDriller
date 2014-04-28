@@ -185,6 +185,8 @@
             <filename>enemies</filename>
             <filename>pressStart2Psmall_0.png</filename>
             <filename>pickups</filename>
+            <filename>character2</filename>
+            <filename>character3</filename>
         </array>
         <key>ignoreFileList</key>
         <array/>

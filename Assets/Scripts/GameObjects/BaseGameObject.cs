@@ -7,6 +7,7 @@ using UnityEngine;
 public class BaseGameObject : FContainer
 {
     protected bool isAlive = true;
+    protected bool lastIsAlive = true;
     protected World world;
     public int health = 2;
     public int damage = 1;
@@ -32,6 +33,7 @@ public class BaseGameObject : FContainer
 
     protected virtual void Update()
     {
+        lastIsAlive = isAlive;
         isAlive = !C.transitioning;
         if (lastDamageCounter < 3)
             lastDamageCounter += UnityEngine.Time.deltaTime;

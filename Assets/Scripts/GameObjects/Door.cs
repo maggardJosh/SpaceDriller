@@ -23,6 +23,8 @@ public class Door
 
     public bool checkPlayer(Player p)
     {
+        if (String.IsNullOrEmpty(toMap))
+            return false;
         if (playerHasLeft)
             return bounds.Contains(p.GetPosition());
         else

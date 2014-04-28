@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <map version="1.0" orientation="orthogonal" width="17" height="12" tilewidth="32" tileheight="32">
  <properties>
-  <property name="MapName" value="The Cave"/>
+  <property name="MapName" value="Escape 03 Access"/>
  </properties>
  <tileset firstgid="1" name="tilemap" tilewidth="32" tileheight="32">
   <image source="gfx/tileset.png" width="384" height="384"/>
@@ -82,7 +82,7 @@
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 </data>
  </layer>
- <objectgroup name="Doors" width="17" height="12" visible="0">
+ <objectgroup name="Doors" width="17" height="12">
   <object name="leftDoor" type="Door" x="32" y="288" width="32" height="64">
    <properties>
     <property name="toDoor" value="rightDoor"/>
@@ -91,8 +91,8 @@
   </object>
   <object name="rightDoor" type="Door" x="480" y="160" width="32" height="64">
    <properties>
-    <property name="toDoor" value="leftDoor"/>
-    <property name="toMap" value="room2_2"/>
+    <property name="toDoor" value="leftBotDoor"/>
+    <property name="toMap" value="room2_3"/>
    </properties>
   </object>
  </objectgroup>

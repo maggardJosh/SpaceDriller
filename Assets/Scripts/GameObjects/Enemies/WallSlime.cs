@@ -26,7 +26,7 @@ public class WallSlime : BaseGameObject
 
     public WallSlime(Vector2 position, float rotation = 0)
     {
-
+        this.health = 15;
         this.SetPosition(position);
         originalPos = this.GetPosition();
 
@@ -75,6 +75,18 @@ public class WallSlime : BaseGameObject
         secondaryPos = new Vector2(tileX * world.map.tileWidth + world.map.tileWidth / 2, -tileY * world.map.tileHeight - world.map.tileHeight / 2);
         movementTime = (originalPos - secondaryPos).magnitude / 300.0f;
 
+    }
+
+    protected override void die()
+    {
+        FSoundManager.PlaySound("slimeDeath");
+        base.die();
+    }
+
+    protected override void takeDamage(int damageAmount, Vector2 position)
+    {
+        base.takeDamage(damageAmount, position);
+        FSoundManager.PlaySound("hit3");
     }
     bool atSecondaryPosition = false;
     EaseType movementEase = EaseType.QuartIn;

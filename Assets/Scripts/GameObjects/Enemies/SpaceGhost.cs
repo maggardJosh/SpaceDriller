@@ -24,6 +24,7 @@ public class SpaceGhost : BaseGameObject
     float knockBackCount = 0;
     float knockBackCountDelay = .3f;
     int tilesAwayTakeNotice = 10;
+    int tilesAwayLoseInterest = 15;
     int level;
     public SpaceGhost(Vector2 position, int level = 1)
     {
@@ -41,7 +42,16 @@ public class SpaceGhost : BaseGameObject
         currentState = State.IDLE;
         this.AddChild(sprite);
     }
-
+    protected override void takeDamage(int damageAmount, Vector2 position)
+    {
+        base.takeDamage(damageAmount, position);
+        FSoundManager.PlaySound("Hit");
+    }
+    protected override void die()
+    {
+        FSoundManager.PlaySound("Ghost2");
+        base.die();
+    }
     float maxRandomMeander = 32 * 5;
     float meanderTime = 4;
     float minMeanderDelay = .5f;
@@ -76,13 +86,14 @@ public class SpaceGhost : BaseGameObject
                 }
                 if (playerRelativePos.sqrMagnitude <= (world.map.tileWidth * world.map.tileWidth) * tilesAwayTakeNotice * 2)
                 {
+                    FSoundManager.PlaySound("ghostNotice");
                     Go.killAllTweensWithTarget(this);
                     currentState = State.CHASE;
                 }
                 break;
             case State.CHASE:
                 sprite.play("chase");
-                if (playerRelativePos.sqrMagnitude > (world.map.tileWidth * world.map.tileWidth) * tilesAwayTakeNotice * 2)
+                if (playerRelativePos.sqrMagnitude > (world.map.tileWidth * world.map.tileWidth) * tilesAwayLoseInterest * 2)
                 {
                     currentState = State.IDLE;
                     originalPos = this.GetPosition();       //Set new home point
@@ -107,7 +118,7 @@ public class SpaceGhost : BaseGameObject
                     knockBackVel *= .94f;
                     if (knockBackVel.sqrMagnitude < 5)
                     {
-                        currentState = State.IDLE;
+                        currentState = State.CHASE;
                         knockBackCount = 0;
                     }
                 }

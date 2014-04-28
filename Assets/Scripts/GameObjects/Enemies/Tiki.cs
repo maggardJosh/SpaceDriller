@@ -68,6 +68,7 @@ public class Tiki : BaseGameObject
                 {
                     if (t.collides(world.p))
                     {
+                        FSoundManager.PlaySound("tikiAwake");
                         currentState = State.BECOMING_ACTIVE;
                         foreach (TikiGuy tiki in tikiGuys)
                             tiki.goActive();
@@ -91,6 +92,7 @@ public class Tiki : BaseGameObject
                 }
                 else
                 {
+                    FSoundManager.PlaySound("tikiJump");
                     currentState = State.JUMPING;
                     yVel = jumpForce;
                     if (world.p.x > this.x)

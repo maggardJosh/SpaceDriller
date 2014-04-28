@@ -121,7 +121,7 @@ public class Player : BaseGameObject
         this.AddChild(sprite);
         this.AddChild(sparkParticleSystem);
 
-        this.damage = 0;
+        this.damage = 1;
     }
 
 

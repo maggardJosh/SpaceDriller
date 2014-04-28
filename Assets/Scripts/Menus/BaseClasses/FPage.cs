@@ -93,7 +93,7 @@ public class FPage : FContainer
                 {
                     Go.killAllTweensWithTarget(myObject.Key);
                     Tween tween = Go.to(myObject.Key, .5f, new TweenConfig().floatProp("alpha", 0.0f).setDelay(delay).setEaseType(EaseType.CircIn));
-                    delay += .5f;
+                    delay += .1f;
                     if (myObject.Key == pageObjectPositions.ElementAt(pageObjectPositions.Count - 1).Key)
                     {
                         tween.setOnCompleteHandler(transitionOff);

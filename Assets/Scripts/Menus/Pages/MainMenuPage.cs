@@ -9,6 +9,7 @@ public class MainMenuPage : FPage
     FSprite bg;
     FSprite titleLabel;
     FSprite pressSpaceLabel;
+    FLabel ldLabel;
     FSprite[] moltars = new FSprite[30];
     float margin = 10;
     public MainMenuPage()
@@ -20,6 +21,9 @@ public class MainMenuPage : FPage
 
         titleLabel = new FSprite("titleLabel");
         pressSpaceLabel = new FSprite("titlePressSpace");
+
+        ldLabel = new FLabel(C.SmallFont , "Made in 72 hours\nLudum Dare 29");
+        this.addObjectToPage(ldLabel, new Vector2(-Futile.screen.halfWidth + ldLabel.textRect.width / 2 + margin, -Futile.screen.halfHeight + ldLabel.textRect.height / 2 + margin));
 
         for (int i = 0; i < moltars.Length; i++)
         {
@@ -70,7 +74,13 @@ public class MainMenuPage : FPage
     {
         if (CurrentState == State.ON)
             if (UnityEngine.Input.GetKeyDown(KeyCode.Space))
+            {
                 FPageManager.getInstance().transitionOn(new InGamePage());
+                Go.killAllTweensWithTarget(titleLabel);
+                Go.killAllTweensWithTarget(pressSpaceLabel);
+                Go.to(titleLabel, animOutTime, new TweenConfig().floatProp("scale", 0).setEaseType(EaseType.CubicOut));
+                Go.to(pressSpaceLabel, animOutTime, new TweenConfig().floatProp("alpha", 0).setEaseType(EaseType.CubicOut));
+            }
 
         base.Update();
     }

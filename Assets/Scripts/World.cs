@@ -171,12 +171,17 @@ public class World : FContainer
                     case 5:
                         addTiki(node);
                         break;
+                    case 6:
+                        addWall(node, 1);
+                        break;
                     case 7:
                         addDrill(node, 2);
                         break;
                     case 8:
                         addDrill(node, 3);
                         break;
+                    case 9:
+                        addWall(node, 2);
                     case 11:
                         addSpaceGhost(node, 3);
                         break;
@@ -246,6 +251,15 @@ public class World : FContainer
         ghost.setWorld(this);
         enemies.Add(ghost);
         playerLayer.AddChild(ghost);
+    }
+
+    private void addWall(XMLNode node, int level)
+    {
+        Wall wall = new Wall(new Vector2(int.Parse(node.attributes["x"]) + map.tileWidth / 2, -int.Parse(node.attributes["y"]) + map.tileHeight), level);
+        wall.setWorld(this);
+        enemies.Add(wall);
+        playerLayer.AddChild(wall);
+
     }
 
     private void addTiki(XMLNode node)

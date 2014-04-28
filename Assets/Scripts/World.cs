@@ -156,6 +156,9 @@ public class World : FContainer
 
                 switch (frameNum)
                 {
+                    case 1:
+                        addSpaceGhost(node, 2);
+                        break;
                     case 2:
                         addSlime(node);
                         break;
@@ -163,7 +166,7 @@ public class World : FContainer
                         addJumpBoots(node);
                         break;
                     case 4:
-                        addSpaceGhost(node);
+                        addSpaceGhost(node, 1);
                         break;
                     case 5:
                         addTiki(node);
@@ -234,9 +237,9 @@ public class World : FContainer
         }
     }
 
-    private void addSpaceGhost(XMLNode node)
+    private void addSpaceGhost(XMLNode node, int level)
     {
-        SpaceGhost ghost = new SpaceGhost(new Vector2(int.Parse(node.attributes["x"]) + map.tileWidth / 2, -int.Parse(node.attributes["y"]) + map.tileHeight / 2));
+        SpaceGhost ghost = new SpaceGhost(new Vector2(int.Parse(node.attributes["x"]) + map.tileWidth / 2, -int.Parse(node.attributes["y"]) + map.tileHeight / 2), level);
         ghost.setWorld(this);
         enemies.Add(ghost);
         playerLayer.AddChild(ghost);

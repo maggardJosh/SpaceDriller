@@ -24,15 +24,15 @@ public class SpaceGhost : BaseGameObject
     float knockBackCount = 0;
     float knockBackCountDelay = .3f;
     int tilesAwayTakeNotice = 10;
-
+    int level;
     public SpaceGhost(Vector2 position, int level = 1)
     {
-
+        this.level = level;
         this.SetPosition(position);
         originalPos = this.GetPosition();
-        this.health = 10;
+        this.health = level == 1 ? 10 : 20;
 
-        sprite = new FAnimatedSprite("spaceGhost1/spaceGhost" + level.ToString());
+        sprite = new FAnimatedSprite("spaceGhost" + level.ToString() + "/spaceGhost" + level.ToString());
         sprite.addAnimation(new FAnimation("idle", new int[] { 1,2,3,4 }, animSpeed));
         sprite.addAnimation(new FAnimation("chase", new int[] { 5,6,7,8 }, animSpeed, true));
         sprite.addAnimation(new FAnimation("stun", new int[] { 9 }, animSpeed, true));
@@ -126,7 +126,7 @@ public class SpaceGhost : BaseGameObject
                 world.p.bounce();
                 if (this.lastDamageCounter > world.p.weaponDamageRate)
                 {
-                    this.takeDamage(world.p.damage * 2);
+                    this.takeDamage((world.p.drillLevel >= this.level + 1) ? world.p.damage * 2 : 0);
                     if (knockBackCount == 0)
                         currentState = State.KNOCKBACK;
 
@@ -136,14 +136,14 @@ public class SpaceGhost : BaseGameObject
             }
             else if (world.p.isAttackingRight() && world.p.x < this.x && world.p.y > this.y - sprite.height / 2 && world.p.y < this.y + sprite.height / 2 && this.lastDamageCounter > world.p.weaponDamageRate)
             {
-                this.takeDamage(world.p.damage);
+                this.takeDamage((world.p.drillLevel >= this.level + 1) ? world.p.damage : 0);
                 if (knockBackCount == 0)
                     currentState = State.KNOCKBACK;
                 knockBackVel = playerRelativePos.normalized * knockbackStrength;
             }
             else if (world.p.isAttackingLeft() && world.p.x > this.x && world.p.y > this.y - sprite.height / 2 && world.p.y < this.y + sprite.height / 2 && this.lastDamageCounter > world.p.weaponDamageRate)
             {
-                this.takeDamage(world.p.damage);
+                this.takeDamage((world.p.drillLevel >= this.level + 1) ? world.p.damage : 0);
                 if (knockBackCount == 0)
                     currentState = State.KNOCKBACK;
                 knockBackVel = playerRelativePos.normalized * knockbackStrength;
@@ -151,7 +151,7 @@ public class SpaceGhost : BaseGameObject
 
             else if (world.p.isAttackingUp() && world.p.y < this.y && world.p.x < this.x + Mathf.Abs(sprite.width) / 2 && world.p.x > this.x - Mathf.Abs(sprite.width) / 2 && this.lastDamageCounter > world.p.weaponDamageRate)
             {
-                this.takeDamage(world.p.damage);
+                this.takeDamage((world.p.drillLevel >= this.level + 1) ? world.p.damage : 0);
                 if (knockBackCount == 0)
                     currentState = State.KNOCKBACK;
                 knockBackVel = playerRelativePos.normalized * knockbackStrength;

@@ -10,7 +10,7 @@
   <image source="gfx/collision.png" width="32" height="32"/>
  </tileset>
  <tileset firstgid="32" name="objects" tilewidth="32" tileheight="32">
-  <image source="gfx/objects.png" width="320" height="32"/>
+  <image source="gfx/objects.png" width="384" height="32"/>
  </tileset>
  <layer name="BG" width="30" height="20">
   <data encoding="csv">
@@ -136,6 +136,7 @@
     <property name="numTikis" value="3"/>
    </properties>
   </object>
+  <object gid="32" x="512" y="288"/>
  </objectgroup>
  <objectgroup name="Objects" width="30" height="20">
   <object gid="38" x="224" y="224"/>

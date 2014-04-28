@@ -73,6 +73,23 @@ public class HealthBar : FContainer
                     Go.to(animHealthCubes[i], 1.0f, new TweenConfig().floatProp("scale", 0).floatProp("alpha", 0).setEaseType(EaseType.CircInOut));
                 }
             }
+            else
+            {
+                if (!healthCubes[i].isVisible)
+                {
+                    int ind = i;
+                    Go.killAllTweensWithTarget(animHealthCubes[i]);
+                    animHealthCubes[i].SetPosition(healthCubes[i].GetPosition());
+                    animHealthCubes[i].color = Color.white;
+                    animHealthCubes[i].alpha = 0;
+                    animHealthCubes[i].scale = 0;
+                    Go.to(animHealthCubes[i], 1.0f, new TweenConfig().floatProp("scale", healthCubes[i].scale).floatProp("alpha", 1).setDelay(i*.1f).setEaseType(EaseType.CircInOut).onComplete((AbstractTween t) =>
+                    {
+                        healthCubes[ind].isVisible = true;
+                        Go.to(animHealthCubes[ind], 1.0f, new TweenConfig().floatProp("alpha", 0));
+                    }));
+                }
+            }
         }
     }
 

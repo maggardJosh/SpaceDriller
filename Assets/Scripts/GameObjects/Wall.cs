@@ -99,7 +99,7 @@ public class Wall : BaseGameObject
             rubbleParticleSystem.AddParticle(rubbleParticleDefinition);
         }
         FSoundManager.PlaySound("Totem2");
-        C.doorsBroken.Add(new KeyValuePair<string, int>(world.map.mapName, doorNumber));
+        C.doorsBroken.Add(new KeyValuePair<string, int>(world.map.actualMapName, doorNumber));
         //Particles
         breakDoor();
     }

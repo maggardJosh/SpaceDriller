@@ -11,6 +11,7 @@ public class World : FContainer
 
     List<Vector2> spawnPoints = new List<Vector2>();
     List<Door> doorList = new List<Door>();
+    List<CheckPoint> checkPointList = new List<CheckPoint>();
     List<BaseGameObject> enemies = new List<BaseGameObject>();
     List<Pickup> pickups = new List<Pickup>();
 
@@ -121,6 +122,10 @@ public class World : FContainer
             }
         }
 
+        foreach (CheckPoint checkPoint in checkPointList)
+            checkPoint.checkPlayer(p);
+
+
         for (int i = 0; i < enemies.Count; i++)
         {
             if (enemies[i].health <= 0)
@@ -145,6 +150,7 @@ public class World : FContainer
 
     private void addObjects(FTmxMap map)
     {
+        checkPointList.Clear();
         pickups.Clear();
         enemies.Clear();
         int doorNumber = 1;
@@ -190,6 +196,9 @@ public class World : FContainer
                     case 11:
                         addSpaceGhost(node, 3);
                         break;
+                    case 12:
+                        addCheckPoint(node);
+                        break;
                 }
             }
             else
@@ -212,6 +221,12 @@ public class World : FContainer
                     doorList.Add(new Door(pos, width, height, node.attributes["name"], toMap, toDoor));
                 }
         }
+    }
+
+    private void addCheckPoint(XMLNode node)
+    {
+        CheckPoint checkPoint = new CheckPoint(new Vector2(float.Parse(node.attributes["x"]), -float.Parse(node.attributes["y"])));
+        checkPointList.Add(checkPoint);
     }
 
     private void addSlime(XMLNode node)

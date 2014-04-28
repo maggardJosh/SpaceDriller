@@ -21,6 +21,8 @@ public static class C
     public static List<KeyValuePair<string, int>> doorsBroken = new List<KeyValuePair<string, int>>();
     //Map name and index of door that was broken
 
+    public static Player.SaveState lastSave;
+
     private static FCamObject camera;
     public static FCamObject getCameraInstance()
     {

@@ -19,6 +19,13 @@ public class Player : BaseGameObject
         FALL_ATTACK_UP
     }
 
+    public struct SaveState
+    {
+        public string mapName;
+        public int drillLevel;
+        public bool jumpBoots;
+    }
+
     KeyCode upKey = KeyCode.UpArrow;
     KeyCode downKey = KeyCode.DownArrow;
     KeyCode leftKey = KeyCode.LeftArrow;
@@ -64,6 +71,7 @@ public class Player : BaseGameObject
     int drillingDirection = -1;         //Drill direction -1 = none, 0 = up, 1 = right, 2 = down, 3 = left
     AudioClip drillSoundClip;
     AudioClip drillOverheatClip;
+    public bool isRecharging = false;
 
     public Player()
     {
@@ -128,6 +136,7 @@ public class Player : BaseGameObject
         sprite.addAnimation(new FAnimation("drillrightIDLE_ATTACK_UP", new int[] { 73, 74 }, animSpeed, true));
         sprite.addAnimation(new FAnimation("drillleftIDLE_ATTACK_UP", new int[] { 75, 76 }, animSpeed, true));
 
+        sprite.addAnimation(new FAnimation("recharge", new int[] { 77, 17 }, animSpeed / 5, true));
 
         sprite.play("leftIDLE");
         this.AddChild(sprite);
@@ -164,6 +173,18 @@ public class Player : BaseGameObject
         base.Update();
         if (!isAlive)
         {
+            if (isRecharging)
+            {
+                sprite.alpha = 1;
+                sprite.play("recharge");
+                if (rechargeCount < rechargeMax)
+                    rechargeCount += Time.deltaTime;
+                else
+                {
+                    C.transitioning = false;
+                    isRecharging = false;
+                }
+            }
             drillSoundSource.Pause();
             return;
         }
@@ -323,6 +344,18 @@ public class Player : BaseGameObject
         sparkParticleSystem.y = -y;
 
 
+    }
+    float rechargeCount = 0;
+    float rechargeMax = 2.0f;
+    public void recharge()
+    {
+        C.lastSave.mapName = world.map.actualMapName;
+        C.lastSave.drillLevel = drillLevel;
+        C.lastSave.jumpBoots = this.maxJumpsLeft == 2;
+        this.health = 8;
+        healthBar.setHealth(8);
+        rechargeCount = 0;
+        isRecharging = true;
     }
 
     private bool isAttackDown()

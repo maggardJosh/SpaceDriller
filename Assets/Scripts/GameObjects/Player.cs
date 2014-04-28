@@ -19,6 +19,14 @@ public class Player : BaseGameObject
         FALL_ATTACK_UP
     }
 
+    KeyCode upKey = KeyCode.UpArrow;
+    KeyCode downKey = KeyCode.DownArrow;
+    KeyCode leftKey = KeyCode.LeftArrow;
+    KeyCode rightKey = KeyCode.RightArrow;
+    KeyCode jumpKey = KeyCode.Space;
+    KeyCode drillKey = KeyCode.D;
+
+
     AnimState currentAnimState = AnimState.IDLE;
 
     private FAnimatedSprite sprite;
@@ -51,6 +59,8 @@ public class Player : BaseGameObject
 
     float collisionWidth = 20;
     float collisionHeight = 25;
+
+    int drillingDirection = -1;         //Drill direction -1 = none, 0 = up, 1 = right, 2 = down, 3 = left
 
     public Player()
     {
@@ -132,7 +142,7 @@ public class Player : BaseGameObject
         if (stunCount <= 0)
         {
 
-            if (Input.GetKeyDown(KeyCode.Space))            //Space has been pressed. Start jumping
+            if (Input.GetKeyDown(jumpKey))            //Space has been pressed. Start jumping
             {
                 if (jumpsLeft > 0)
                 {
@@ -141,7 +151,7 @@ public class Player : BaseGameObject
                 }
 
             }
-            else if (!Input.GetKey(KeyCode.Space))       //Space is not held down... Let the player stop jumping if currently jumping
+            else if (!Input.GetKey(jumpKey))       //Space is not held down... Let the player stop jumping if currently jumping
             {
                 if (!forceBounce && yVel > 0)
                     yVel *= .4f;
@@ -157,13 +167,13 @@ public class Player : BaseGameObject
 
                 }
             }
-            if (Input.GetKey(KeyCode.A))
+            if (Input.GetKey(leftKey))
             {
                 xMove = -Time.deltaTime * speed;
                 isFacingLeft = true;
             }
             else
-                if (Input.GetKey(KeyCode.D))
+                if (Input.GetKey(rightKey))
                 {
                     xMove = Time.deltaTime * speed;
                     isFacingLeft = false;
@@ -172,12 +182,22 @@ public class Player : BaseGameObject
                 currentAnimState = AnimState.IDLE;
             if (currentAnimState == AnimState.IDLE && xMove != 0)
                 currentAnimState = AnimState.RUN;
-            if (Input.GetKey(KeyCode.S))
+            if (Input.GetKey(KeyCode.W))
+                drillingDirection = 0;
+            else if (Input.GetKey(KeyCode.D))
+                drillingDirection = 1;
+            else if (Input.GetKey(KeyCode.S))
+                drillingDirection = 2;
+            else if (Input.GetKey(KeyCode.A))
+                drillingDirection = 3;
+            else
+                drillingDirection = -1;
+            if (Input.GetKey(downKey))
             {
                 if (currentAnimState == AnimState.JUMP || currentAnimState == AnimState.FALL)
                     currentAnimState = AnimState.FALL_ATTACK_DOWN;
             }
-            if (Input.GetKey(KeyCode.W))
+            if (Input.GetKey(upKey))
             {
 
                 if (currentAnimState == AnimState.IDLE)
@@ -259,7 +279,7 @@ public class Player : BaseGameObject
 
     private bool isAttackDown()
     {
-        return UnityEngine.Input.GetKey(KeyCode.U);
+        return UnityEngine.Input.GetKey(drillKey);
     }
 
     private void spawnSparks()

@@ -60,7 +60,7 @@ public class BaseGameObject : FContainer
         this.takeDamage(damageAmount, this.GetPosition());
     }
 
-    protected void die()
+    protected virtual void die()
     {
         //TODO: actual death 
         this.RemoveFromContainer();

@@ -6,7 +6,7 @@ using UnityEngine;
 
 public class TikiGuy : BaseGameObject
 {
-    const int NUM_TIKI_FACES = 1;
+    const int NUM_TIKI_FACES = 2;
     FAnimatedSprite sprite;
     public float height { get { return sprite.height; } }
     Tiki tikiParent;
@@ -14,9 +14,10 @@ public class TikiGuy : BaseGameObject
     public TikiGuy(Tiki tikiParent)
     {
         this.tikiParent = tikiParent;
-        sprite = new FAnimatedSprite("Tiki/TikiGuy" + (RXRandom.Int(NUM_TIKI_FACES) + 1).ToString());
+        sprite = new FAnimatedSprite("Tiki/tikiGuy" + (RXRandom.Int(NUM_TIKI_FACES) + 1).ToString());
         sprite.addAnimation(new FAnimation("idle", new int[] { 1 }, 100, true));
-        sprite.addAnimation(new FAnimation("active", new int[] { 2 }, 100, true));
+        sprite.addAnimation(new FAnimation("active", new int[] { 5 }, 100, true));
+        sprite.addAnimation(new FAnimation("breaking", new int[] { 1, 2, 3, 4 }, 100, false));
         sprite.play("idle");
         this.health = 3;
     }
@@ -24,7 +25,6 @@ public class TikiGuy : BaseGameObject
     public void goActive()
     {
         sprite.play("active");
-
     }
 
     public bool collides(Player p)
@@ -60,13 +60,22 @@ public class TikiGuy : BaseGameObject
                 foreach (AbstractTween tween in Go.tweensWithTarget(this))
                     tween.play();
         }
-        if ((tikiParent.currentState == Tiki.State.BECOMING_ACTIVE) || ( tikiParent.currentState == Tiki.State.ACTIVE ))
-            disp.x = RXRandom.Int(2);
+        if (health <= 0)
+        {
+            if (sprite.IsStopped)
+                this.RemoveFromContainer();
+        }
         else
-            disp.x = 0;
+        {
+            if ((tikiParent.currentState == Tiki.State.BECOMING_ACTIVE) || (tikiParent.currentState == Tiki.State.ACTIVE))
+                disp.x = RXRandom.Int(2);
+            else
+                disp.x = 0;
 
-        sprite.SetPosition(this.GetPosition()+ disp);
-        
+        }
+
+        sprite.SetPosition(this.GetPosition() + disp);
+
     }
 
     public void moveDown(int newPosition)
@@ -95,31 +104,37 @@ public class TikiGuy : BaseGameObject
                 }
 
             }
-            else 
-            if (world.p.isAttackingRight() && playerRelativePos.x < this.x && playerRelativePos.y > this.y - sprite.height / 2 && playerRelativePos.y < this.y + sprite.height / 2 && this.lastDamageCounter > world.p.weaponDamageRate)
-            {
-                this.takeDamage(world.p.damage, this.GetPosition() + tikiPos);
-
-            }
-            else if (world.p.isAttackingLeft() && playerRelativePos.x > this.x && playerRelativePos.y > this.y - sprite.height / 2 && playerRelativePos.y < this.y + sprite.height / 2 && this.lastDamageCounter > world.p.weaponDamageRate)
-            {
-                this.takeDamage(world.p.damage, this.GetPosition() + tikiPos);
-            }
-
-            else if (world.p.isAttackingUp() && playerRelativePos.y < this.y && playerRelativePos.x < this.x + Mathf.Abs(sprite.width) / 2 && playerRelativePos.x > this.x - Mathf.Abs(sprite.width) / 2 && this.lastDamageCounter > world.p.weaponDamageRate)
-            {
-                this.takeDamage(world.p.damage, this.GetPosition() + tikiPos);
-
-            }
             else
-                if (tikiParent.currentState != Tiki.State.BECOMING_ACTIVE && (playerRelativePos - this.GetPosition()).sqrMagnitude < (sprite.width * sprite.width) / 5)
+                if (world.p.isAttackingRight() && playerRelativePos.x < this.x && playerRelativePos.y > this.y - sprite.height / 2 && playerRelativePos.y < this.y + sprite.height / 2 && this.lastDamageCounter > world.p.weaponDamageRate)
                 {
+                    this.takeDamage(world.p.damage, this.GetPosition() + tikiPos);
 
-                    world.p.takeDamage(this);
                 }
+                else if (world.p.isAttackingLeft() && playerRelativePos.x > this.x && playerRelativePos.y > this.y - sprite.height / 2 && playerRelativePos.y < this.y + sprite.height / 2 && this.lastDamageCounter > world.p.weaponDamageRate)
+                {
+                    this.takeDamage(world.p.damage, this.GetPosition() + tikiPos);
+                }
+
+                else if (world.p.isAttackingUp() && playerRelativePos.y < this.y && playerRelativePos.x < this.x + Mathf.Abs(sprite.width) / 2 && playerRelativePos.x > this.x - Mathf.Abs(sprite.width) / 2 && this.lastDamageCounter > world.p.weaponDamageRate)
+                {
+                    this.takeDamage(world.p.damage, this.GetPosition() + tikiPos);
+
+                }
+                else
+                    if (tikiParent.currentState != Tiki.State.BECOMING_ACTIVE && (playerRelativePos - this.GetPosition()).sqrMagnitude < (sprite.width * sprite.width) / 5)
+                    {
+
+                        world.p.takeDamage(this);
+                    }
 
 
         }
+    }
+
+    protected override void die()
+    {
+        sprite.play("breaking", true);
+
     }
 }
 

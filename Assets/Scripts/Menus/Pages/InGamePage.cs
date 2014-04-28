@@ -16,7 +16,6 @@ public class InGamePage : FPage
         Futile.stage.AddChild(world);
         world.loadMap("room1_1");
         Player p = new Player();
-        RXDebug.Log("HI");
         world.spawnPlayer(p, "tutorialDoor");
         HealthBar hb = new HealthBar();
         OverheatBar ob = new OverheatBar();

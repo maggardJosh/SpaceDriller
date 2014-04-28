@@ -29,6 +29,7 @@ public class Wall : BaseGameObject
         if (!isBroken)
         {
             Vector2 playerRelativePos = this.GetPosition() - world.p.GetPosition();
+            float spriteWidth = Math.Abs(sprite.width);
             if (playerRelativePos.sqrMagnitude < (sprite.width * sprite.width))
             {
                 if (world.p.isAttackingRight() && world.p.x < this.x && world.p.y > this.y - sprite.height / 2 && world.p.y < this.y + sprite.height / 2 && this.lastDamageCounter > world.p.weaponDamageRate)
@@ -41,22 +42,27 @@ public class Wall : BaseGameObject
                     this.takeDamage((world.p.drillLevel >= this.level) ? world.p.damage : 0);
 
                 }
-                if (playerRelativePos.x > -sprite.width / 2 &&
-                    playerRelativePos.x < sprite.width / 2 &&
+                if (playerRelativePos.x > -spriteWidth / 2 &&
+                    playerRelativePos.x <  spriteWidth / 2 &&
                     playerRelativePos.y > -sprite.height / 2 &&
-                    playerRelativePos.y < sprite.height / 2)
+                    playerRelativePos.y <  sprite.height / 2)
                 {
 
                     if (playerRelativePos.x > 0)
-                        world.p.x = this.x - sprite.width / 2;
+                        world.p.x = this.x - Math.Abs(sprite.width) / 2;
                     else
-                        world.p.x = this.x + sprite.width / 2;
+                        world.p.x = this.x + Math.Abs(sprite.width) / 2;
 
                 }
 
             }
         }
         base.Update();
+    }
+
+    public void flip()
+    {
+        sprite.scaleX = -1;
     }
     protected override void takeDamage(int damageAmount, Vector2 position)
     {

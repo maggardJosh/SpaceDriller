@@ -20,7 +20,7 @@ public class FPageManager
 
     private FPageManager()
     {
-        currentPage = new InGamePage();
+        currentPage = new MainMenuPage();
         currentPage.startTransitionOn();
     }
 

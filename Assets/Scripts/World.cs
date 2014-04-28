@@ -260,7 +260,16 @@ public class World : FContainer
 
     private void addWall(XMLNode node, int level, int doorNumber)
     {
+        bool isFlipped = false;
+        foreach (XMLNode child in node.children)
+            if (child.tagName.CompareTo("properties") == 0)
+                foreach (XMLNode property in child.children)
+                    if (property.attributes["name"].CompareTo("isFlipped")==0)
+                        isFlipped = true;
+
         Wall wall = new Wall(new Vector2(int.Parse(node.attributes["x"]) + map.tileWidth / 2, -int.Parse(node.attributes["y"]) + map.tileHeight), level, doorNumber);
+        if (isFlipped)
+            wall.flip();
         foreach (KeyValuePair<string, int> pair in C.doorsBroken)
         {
             if (pair.Key.CompareTo(this.map.mapName) == 0)

@@ -187,6 +187,11 @@
             <filename>pickups</filename>
             <filename>character2</filename>
             <filename>character3</filename>
+            <filename>doors</filename>
+            <filename>doorParticles</filename>
+            <filename>titleLabel.png</filename>
+            <filename>titlePressSpace.png</filename>
+            <filename>title.png</filename>
         </array>
         <key>ignoreFileList</key>
         <array/>

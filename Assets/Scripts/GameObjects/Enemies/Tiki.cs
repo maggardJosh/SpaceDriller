@@ -203,6 +203,7 @@ public class Tiki : BaseGameObject
             {
                 this.y = -(newTileY) * world.map.tileHeight + world.map.tileWidth / 2;
                 currentState = State.ACTIVE;
+                C.getCameraInstance().shake(1.0f, .5f);
                 activeCount = 0;
             }
         }

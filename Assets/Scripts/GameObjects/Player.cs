@@ -48,6 +48,7 @@ public class Player : BaseGameObject
 
     float overheat = 0;
     bool isOverheated = false;
+    public int drillLevel = 1;
 
     FParticleSystem sparkParticleSystem;
     FParticleDefinition sparkParticleDefinition;
@@ -120,10 +121,29 @@ public class Player : BaseGameObject
         sprite.play("leftIDLE");
         this.AddChild(sprite);
         this.AddChild(sparkParticleSystem);
-
         this.damage = 1;
     }
 
+    public void setDrillPower(int level)
+    {
+        drillLevel = level;
+        switch(level)
+        {
+            case 1:
+                this.sprite.baseName = "player";
+                weaponDamageRate = 1/10f;
+                break;
+
+            case 2:
+                this.sprite.baseName = "player2";
+                weaponDamageRate = 1/15f;
+                break;
+            case 3:
+                this.sprite.baseName = "player3";
+                weaponDamageRate = 1 / 30f;
+                break;
+        }
+    }
 
     protected override void Update()
     {

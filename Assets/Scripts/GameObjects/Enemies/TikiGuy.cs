@@ -46,13 +46,27 @@ public class TikiGuy : BaseGameObject
 
     protected override void Update()
     {
+        base.Update();
+        if (!isAlive)
+        {
+            if (lastIsAlive)
+                foreach (AbstractTween tween in Go.tweensWithTarget(this))
+                    tween.pause();
+            return;
+        }
+        else
+        {
+            if (!lastIsAlive)
+                foreach (AbstractTween tween in Go.tweensWithTarget(this))
+                    tween.play();
+        }
         if ((tikiParent.currentState == Tiki.State.BECOMING_ACTIVE) || ( tikiParent.currentState == Tiki.State.ACTIVE ))
             disp.x = RXRandom.Int(2);
         else
             disp.x = 0;
 
         sprite.SetPosition(this.GetPosition()+ disp);
-        base.Update();
+        
     }
 
     public void moveDown(int newPosition)

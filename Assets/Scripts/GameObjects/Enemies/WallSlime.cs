@@ -45,7 +45,7 @@ public class WallSlime : BaseGameObject
     public override void setWorld(World world)
     {
         base.setWorld(world);
-
+       
         int tileX = Mathf.FloorToInt(this.x / world.map.tileWidth);
         int tileY = Mathf.FloorToInt(-this.y / world.map.tileHeight);
 
@@ -85,7 +85,18 @@ public class WallSlime : BaseGameObject
     {
         base.Update();
         if (!isAlive)
+        {
+            if (lastIsAlive)
+                foreach (AbstractTween tween in Go.tweensWithTarget(this))
+                    tween.pause();
             return;
+        }
+        else
+        {
+            if (!lastIsAlive)
+                foreach (AbstractTween tween in Go.tweensWithTarget(this))
+                    tween.play();
+        }
         switch (currentState)
         {
             case State.IDLE:

@@ -51,6 +51,19 @@ public class SpaceGhost : BaseGameObject
     protected override void Update()
     {
         base.Update();
+        if (!isAlive)
+        {
+            if (lastIsAlive)
+                foreach (AbstractTween tween in Go.tweensWithTarget(this))
+                    tween.pause();
+            return;
+        }
+        else
+        {
+            if (!lastIsAlive)
+                foreach (AbstractTween tween in Go.tweensWithTarget(this))
+                    tween.play();
+        }
         Vector2 playerRelativePos = this.GetPosition() - world.p.GetPosition();
         switch (currentState)
         {
@@ -146,24 +159,17 @@ public class SpaceGhost : BaseGameObject
             else
                 if (playerRelativePos.sqrMagnitude < (sprite.width * sprite.width) / 5)
                 {
-                    if (currentState == State.KNOCKBACK)
-                    {
-
-                      //  this.x = world.p.GetPosition().x + playerRelativePos.normalized.x * Mathf.Abs(sprite.width / 5);
-                       // this.y = world.p.GetPosition().y + playerRelativePos.normalized.y * Mathf.Abs(sprite.width / 5);
-
-                    }
-                    else
+                    if (currentState != State.KNOCKBACK)
                         world.p.takeDamage(this);
                 }
 
             if (currentState == State.KNOCKBACK)
             {
-                if (playerRelativePos.sqrMagnitude < (sprite.width * sprite.width))
+                if (playerRelativePos.sqrMagnitude < (sprite.width/2) * (sprite.width/2))
                 {
 
-                    this.x = world.p.GetPosition().x + playerRelativePos.normalized.x * Mathf.Abs(sprite.width );
-                    this.y = world.p.GetPosition().y + playerRelativePos.normalized.y * Mathf.Abs(sprite.width );
+                    this.x = world.p.GetPosition().x + playerRelativePos.normalized.x * Mathf.Abs(sprite.width/1.9f );
+                    this.y = world.p.GetPosition().y + playerRelativePos.normalized.y * Mathf.Abs(sprite.width/1.9f );
 
                 }
             }

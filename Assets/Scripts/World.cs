@@ -177,6 +177,9 @@ public class World : FContainer
                     case 8:
                         addDrill(node, 3);
                         break;
+                    case 11:
+                        addSpaceGhost(node, 3);
+                        break;
                 }
             }
             else

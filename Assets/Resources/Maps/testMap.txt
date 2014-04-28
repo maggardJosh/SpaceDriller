@@ -137,6 +137,7 @@
    </properties>
   </object>
   <object gid="32" x="512" y="288"/>
+  <object gid="42" x="544" y="192"/>
  </objectgroup>
  <objectgroup name="Objects" width="30" height="20">
   <object gid="38" x="224" y="224"/>

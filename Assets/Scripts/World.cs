@@ -272,7 +272,7 @@ public class World : FContainer
             wall.flip();
         foreach (KeyValuePair<string, int> pair in C.doorsBroken)
         {
-            if (pair.Key.CompareTo(this.map.mapName) == 0)
+            if (pair.Key.CompareTo(this.map.actualMapName) == 0)
                 if (pair.Value == doorNumber)
                     wall.breakDoor();
         }

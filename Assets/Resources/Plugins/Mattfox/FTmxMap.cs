@@ -21,6 +21,7 @@ public class FTmxMap : FContainer
 
     public int tileWidth;
     public int tileHeight;
+    public string actualMapName;
     public string mapName;
 
     public FTmxMap()
@@ -47,6 +48,7 @@ public class FTmxMap : FContainer
         XMLNode rootNode = xmlNode.children[0] as XMLNode;
         int firstgid = 0;
 
+        this.actualMapName = fileName;
 
 
         int tilesWide = int.Parse(rootNode.attributes["width"]);

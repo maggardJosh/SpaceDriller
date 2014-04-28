@@ -96,9 +96,9 @@ public class Tiki : BaseGameObject
                     currentState = State.JUMPING;
                     yVel = jumpForce;
                     if (world.p.x > this.x)
-                        xVel = xJumpForce;
+                        xVel = xJumpForce * (.6f + RXRandom.Float() * .4f);
                     else
-                        xVel = -xJumpForce;
+                        xVel = -xJumpForce * (.6f + RXRandom.Float() * .4f); ;
                     oldY = this.y;
                 }
                 break;

@@ -11,11 +11,13 @@ public class InGamePage : FPage
 
     public InGamePage()
     {
+        FSoundManager.PlayMusic("SD1st Area Music");
         world = new World();
         Futile.stage.AddChild(world);
-        world.loadMap("testMap");
+        world.loadMap("room1_1");
         Player p = new Player();
-        world.spawnPlayer(p, "topDoor");
+        RXDebug.Log("HI");
+        world.spawnPlayer(p, "tutorialDoor");
         HealthBar hb = new HealthBar();
         OverheatBar ob = new OverheatBar();
         hb.y = (int)(Futile.screen.halfHeight - hb.Height / 2 - 10);

@@ -11,7 +11,6 @@ public class GameScript : MonoBehaviour {
         fparams.backgroundColor = Color.black;
         fparams.origin = new Vector2(.5f, .5f);
         Futile.instance.Init(fparams);
-        FSoundManager.PlayMusic("SD1st Area Music");
         Futile.atlasManager.LoadAtlas("Atlases/gameAtlas");
 
         Futile.atlasManager.LoadFont(C.NormalFont, "pressStart2P_0", "Atlases/pressStart2P", 0,0);
@@ -20,7 +19,6 @@ public class GameScript : MonoBehaviour {
         FPageManager.getInstance();
 
         FSoundManager.PreloadSound("Drill4");
-
 	}
 	
 	// Update is called once per frame

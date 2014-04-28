@@ -64,6 +64,7 @@ public class World : FContainer
         FCamObject camera = C.getCameraInstance();
         map.clipNode = camera;
         map.LoadTMX("Maps/" + mapName);
+        map.actualMapName = mapName;
 
         camera.setWorldBounds(new Rect(0, -map.height, map.width, map.height));
 
@@ -105,6 +106,50 @@ public class World : FContainer
                 }));
                 break;
             }
+    }
+
+    public void loadLastSave()
+    {
+        if (String.IsNullOrEmpty(C.lastSave.mapName))
+        {
+
+            C.getCameraInstance().MoveToFront();
+            Go.to(whiteOverlaySprite, C.transitioningTime, new TweenConfig().floatProp("alpha", 1.0f).setEaseType(EaseType.QuadOut).onComplete((AbstractTween t) =>
+            {
+                p.setDrillPower(1);
+                p.maxJumpsLeft = 1;
+                C.doorsBroken.Clear();
+                this.RemoveAllChildren();
+                loadMap(C.startMap);
+                spawnPlayer(p, C.startDoor);
+                p.setHealth(8);
+                mapNameLabel.alpha = 1;
+                Go.killAllTweensWithTarget(mapNameLabel);
+                mapNameLabel.text = map.mapName;
+                Go.to(whiteOverlaySprite, C.transitioningTime, new TweenConfig().floatProp("alpha", 0).setEaseType(EaseType.QuadIn).onComplete((AbstractTween t2) => { C.transitioning = false; Go.to(mapNameLabel, 2.0f, new TweenConfig().floatProp("alpha", 0).setDelay(1.0f).setEaseType(EaseType.QuadIn)); }));
+            }));
+        }
+        else
+        {
+
+            C.getCameraInstance().MoveToFront();
+            Go.to(whiteOverlaySprite, C.transitioningTime, new TweenConfig().floatProp("alpha", 1.0f).setEaseType(EaseType.QuadOut).onComplete((AbstractTween t) =>
+            {
+                p.setDrillPower(C.lastSave.drillLevel);
+                p.maxJumpsLeft = C.lastSave.jumpBoots ? 2 : 1;
+                C.doorsBroken = new List<KeyValuePair<string, int>>(C.lastSave.openedDoors.AsEnumerable());
+                
+                this.RemoveAllChildren();
+                loadMap(C.lastSave.mapName);
+                if (checkPointList.Count > 0)
+                    checkPointList[0].spawnPlayer(p);
+                spawnPlayer(p);
+                mapNameLabel.alpha = 1;
+                Go.killAllTweensWithTarget(mapNameLabel);
+                mapNameLabel.text = map.mapName;
+                Go.to(whiteOverlaySprite, C.transitioningTime, new TweenConfig().floatProp("alpha", 0).setEaseType(EaseType.QuadIn).onComplete((AbstractTween t2) => { C.transitioning = false; Go.to(mapNameLabel, 2.0f, new TweenConfig().floatProp("alpha", 0).setDelay(1.0f).setEaseType(EaseType.QuadIn)); }));
+            }));
+        }
     }
 
     private void Update()
@@ -279,7 +324,7 @@ public class World : FContainer
         foreach (XMLNode child in node.children)
             if (child.tagName.CompareTo("properties") == 0)
                 foreach (XMLNode property in child.children)
-                    if (property.attributes["name"].CompareTo("isFlipped")==0)
+                    if (property.attributes["name"].CompareTo("isFlipped") == 0)
                         isFlipped = true;
 
         Wall wall = new Wall(new Vector2(int.Parse(node.attributes["x"]) + map.tileWidth / 2, -int.Parse(node.attributes["y"]) + map.tileHeight), level, doorNumber);
@@ -329,6 +374,18 @@ public class World : FContainer
         p.lastY = p.y;
         p.lastX = p.x;
         p.setWorld(this);
+        p.resetCounts();
+    }
+
+    public void spawnPlayer(Player p)
+    {
+        this.p = p;
+        C.getCameraInstance().follow(p);
+        playerLayer.AddChild(p);
+        p.lastX = p.x;
+        p.lastY = p.y;
+        p.setWorld(this);
+        p.resetCounts();
     }
 }
 

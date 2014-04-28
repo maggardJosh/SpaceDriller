@@ -11,6 +11,9 @@ public static class C
     public const string SmallFont = "PressStart2Psmall";
     public const float disableMovementTime = .5f;
 
+    public const string startMap = "room1_1";
+    public const string startDoor = "tutorialDoor";
+
     public static bool transitioning = false;
     public const float transitioningTime = .5f;
 
@@ -21,7 +24,7 @@ public static class C
     public static List<KeyValuePair<string, int>> doorsBroken = new List<KeyValuePair<string, int>>();
     //Map name and index of door that was broken
 
-    public static Player.SaveState lastSave;
+    public static Player.SaveState lastSave = new Player.SaveState();
 
     private static FCamObject camera;
     public static FCamObject getCameraInstance()

@@ -112,5 +112,6 @@
   </object>
   <object gid="151" x="1120" y="224"/>
   <object gid="157" x="384" y="320"/>
+  <object gid="152" x="544" y="320"/>
  </objectgroup>
 </map>

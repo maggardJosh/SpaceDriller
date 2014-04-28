@@ -24,6 +24,7 @@ public class Player : BaseGameObject
         public string mapName;
         public int drillLevel;
         public bool jumpBoots;
+        public List<KeyValuePair<string, int>> openedDoors;
     }
 
     KeyCode upKey = KeyCode.UpArrow;
@@ -32,6 +33,8 @@ public class Player : BaseGameObject
     KeyCode rightKey = KeyCode.RightArrow;
     KeyCode jumpKey = KeyCode.Space;
     KeyCode drillKey = KeyCode.D;
+
+    InGamePage gamePage;
 
     AudioSource drillSoundSource;
     AnimState currentAnimState = AnimState.IDLE;
@@ -73,8 +76,9 @@ public class Player : BaseGameObject
     AudioClip drillOverheatClip;
     public bool isRecharging = false;
 
-    public Player()
+    public Player(InGamePage gamePage)
     {
+        this.gamePage = gamePage;
         drillSoundSource = new AudioSource();
         drillSoundSource = Futile.instance.gameObject.AddComponent<AudioSource>();
         drillSoundSource.loop = true;
@@ -84,7 +88,7 @@ public class Player : BaseGameObject
         drillSoundSource.clip = drillSoundClip;
 
 
-        health = 8;
+        health = 1;
         sparkParticleSystem = new FParticleSystem(100);
         sparkParticleDefinition = new FParticleDefinition(C.whiteElement);
         sparkParticleDefinition.startColor = Color.yellow;
@@ -97,6 +101,8 @@ public class Player : BaseGameObject
         sprite = new FAnimatedSprite("player");
         sprite.addAnimation(new FAnimation("leftstun", new int[] { 32, 14 }, animSpeed / 100, true));
         sprite.addAnimation(new FAnimation("rightstun", new int[] { 31, 13 }, animSpeed / 100, true));
+        sprite.addAnimation(new FAnimation("leftDead", new int[] { 32 }, animSpeed / 100, true));
+        sprite.addAnimation(new FAnimation("rightDead", new int[] { 31 }, animSpeed / 100, true));
 
         sprite.addAnimation(new FAnimation("rightRUN", new int[] { 1, 2, 3, 4 }, animSpeed, true));
         sprite.addAnimation(new FAnimation("leftRUN", new int[] { 5, 6, 7, 8 }, animSpeed, true));
@@ -144,6 +150,16 @@ public class Player : BaseGameObject
         this.damage = 1;
     }
 
+    public void resetCounts()
+    {
+        stunCount = 0;
+        xVel = 0;
+    }
+    public void setHealth(int newHealth)
+    {
+        this.health = newHealth;
+        healthBar.setHealth(newHealth);
+    }
     public void setDrillPower(int level)
     {
         drillLevel = level;
@@ -164,7 +180,8 @@ public class Player : BaseGameObject
                 break;
         }
     }
-
+    float deathCount = 0;
+    float deathTime = 2.0f;
     protected override void Update()
     {
         lastX = this.x;
@@ -173,6 +190,20 @@ public class Player : BaseGameObject
         base.Update();
         if (!isAlive)
         {
+            if (health <= 0)
+            {
+                if (deathCount <= deathTime)
+                {
+                    deathCount += Time.deltaTime;
+                    sprite.play((isFacingLeft ? "left" : "right") + "Dead");
+                }
+                else
+                {
+                    health = 1;
+                    world.loadLastSave();
+
+                }
+            }
             if (isRecharging)
             {
                 sprite.alpha = 1;
@@ -311,6 +342,15 @@ public class Player : BaseGameObject
             if (xVel == 0)
                 stunCount -= UnityEngine.Time.deltaTime;
 
+            if (yVel < 0)
+            {
+                if (health <= 0)
+                {
+                    C.transitioning = true;
+                    deathCount = 0;
+                }
+            }
+
             if (stunCount <= 0)
                 invulnerableCount = C.stunInvulnTime;       //Done being stunned now have control and be invulnerable
         }
@@ -349,9 +389,11 @@ public class Player : BaseGameObject
     float rechargeMax = 2.0f;
     public void recharge()
     {
+        FSoundManager.PlaySound("recharge");
         C.lastSave.mapName = world.map.actualMapName;
         C.lastSave.drillLevel = drillLevel;
         C.lastSave.jumpBoots = this.maxJumpsLeft == 2;
+        C.lastSave.openedDoors = new List<KeyValuePair<string, int>>(C.doorsBroken.AsEnumerable());
         this.health = 8;
         healthBar.setHealth(8);
         rechargeCount = 0;

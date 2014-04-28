@@ -37,7 +37,7 @@ public class CheckPoint
 
     public void spawnPlayer(Player p)
     {
-        playerHasLeft = false;
+        playerHasLeft = true;
         p.SetPosition(bounds.x + bounds.width / 2, bounds.y + bounds.width / 2);
     }
 }

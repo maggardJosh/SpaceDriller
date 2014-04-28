@@ -13,6 +13,7 @@ public class Wall : BaseGameObject
 
     public Wall(Vector2 pos, int level, int doorNumber)
     {
+        this.health = 15 * level;
         this.doorNumber = doorNumber;
         this.SetPosition(pos);
         this.level = level;
@@ -57,6 +58,11 @@ public class Wall : BaseGameObject
         }
         base.Update();
     }
+    protected override void takeDamage(int damageAmount, Vector2 position)
+    {
+        base.takeDamage(damageAmount, position);
+        FSoundManager.PlaySound("Hit");
+    }
     public void breakDoor()
     {
         isBroken = true;
@@ -86,6 +92,7 @@ public class Wall : BaseGameObject
             rubbleParticleDefinition.speedY = Mathf.Sin(angle * C.PIOVER180) * (75 + 25 * RXRandom.Float());
             rubbleParticleSystem.AddParticle(rubbleParticleDefinition);
         }
+        FSoundManager.PlaySound("Totem2");
         C.doorsBroken.Add(new KeyValuePair<string, int>(world.map.mapName, doorNumber));
         //Particles
         breakDoor();

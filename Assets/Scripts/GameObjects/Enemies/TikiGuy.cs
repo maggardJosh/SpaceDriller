@@ -131,9 +131,15 @@ public class TikiGuy : BaseGameObject
         }
     }
 
+    protected override void takeDamage(int damageAmount, Vector2 position)
+    {
+        base.takeDamage(damageAmount, position);
+        FSoundManager.PlaySound("Hit2");
+    }
     protected override void die()
     {
         sprite.play("breaking", true);
+        FSoundManager.PlaySound("Totem2");
         Go.to(this, 1.0f, new TweenConfig().floatProp("alpha", 0));
 
     }

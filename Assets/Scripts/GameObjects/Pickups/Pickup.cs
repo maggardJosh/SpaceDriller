@@ -24,6 +24,7 @@ public class Pickup : FSprite
 
     public void pickup(Player p)
     {
+        FSoundManager.PlaySound("Powerup1");
         pickupAction(p);
         p.playIdle();
         C.transitioning = true;
@@ -33,13 +34,13 @@ public class Pickup : FSprite
         this.x -= C.getCameraInstance().x;
         this.y -= C.getCameraInstance().y;
 
-        Go.to(this, 2.0f, new TweenConfig().floatProp("x", 0).floatProp("y", 0).floatProp("scale", 3).onComplete((AbstractTween t) =>
+        Go.to(this, .5f, new TweenConfig().floatProp("x", 0).floatProp("y", 0).floatProp("scale", 3).setEaseType(EaseType.CubicOut).onComplete((AbstractTween t) =>
         {
             C.getCameraInstance().AddChild(displayMessage);
             displayMessage.alpha = 0;
             displayMessage.x = this.x;
             displayMessage.y = this.y - 100;
-            Go.to(displayMessage, 2.0f, new TweenConfig().floatProp("alpha", 1.0f).onComplete((AbstractTween t2) =>
+            Go.to(displayMessage, 1.0f, new TweenConfig().floatProp("alpha", 1.0f).onComplete((AbstractTween t2) =>
             {
                 Futile.instance.SignalUpdate += listenForKey;
             }));

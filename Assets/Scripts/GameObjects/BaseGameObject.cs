@@ -44,7 +44,7 @@ public class BaseGameObject : FContainer
         this.world = world;
     }
 
-    protected void takeDamage(int damageAmount, Vector2 position)
+    protected virtual void takeDamage(int damageAmount, Vector2 position)
     {
         this.health -= damageAmount;
         lastDamageCounter = 0;

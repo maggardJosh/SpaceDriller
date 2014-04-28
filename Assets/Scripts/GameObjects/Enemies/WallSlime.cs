@@ -115,6 +115,7 @@ public class WallSlime : BaseGameObject
                 {
                     sprite.play("start_launch", true);
                     currentState = State.STARTING_LAUNCH;
+                    FSoundManager.PlaySound("SlimeJump");
                 }
                 break;
             case State.STARTING_LAUNCH:
@@ -123,9 +124,9 @@ public class WallSlime : BaseGameObject
                     Go.killAllTweensWithTarget(this);
                     sprite.play("launching");
                     if (sprite.rotation == 0 || sprite.rotation == 180)
-                        Go.to(this, movementTime, new TweenConfig().floatProp("x", atSecondaryPosition ? originalPos.x : secondaryPos.x).setEaseType(movementEase).onComplete((AbstractTween t) => { sprite.play("landing"); currentState = State.LANDING; }));
+                        Go.to(this, movementTime, new TweenConfig().floatProp("x", atSecondaryPosition ? originalPos.x : secondaryPos.x).setEaseType(movementEase).onComplete((AbstractTween t) => { sprite.play("landing"); currentState = State.LANDING; FSoundManager.PlaySound("SlimeLand"); }));
                     else
-                        Go.to(this, movementTime, new TweenConfig().floatProp("y", atSecondaryPosition ? originalPos.y : secondaryPos.y).setEaseType(movementEase).onComplete((AbstractTween t) => { sprite.play("landing"); currentState = State.LANDING; }));
+                        Go.to(this, movementTime, new TweenConfig().floatProp("y", atSecondaryPosition ? originalPos.y : secondaryPos.y).setEaseType(movementEase).onComplete((AbstractTween t) => { sprite.play("landing"); currentState = State.LANDING; FSoundManager.PlaySound("SlimeLand"); }));
                     currentState = State.LAUNCHING;
                 }
                 break;

@@ -9,14 +9,18 @@ public class Wall : BaseGameObject
     FAnimatedSprite sprite;
     int level;
     bool isBroken = false;
-    public Wall(Vector2 pos, int level)
+    int doorNumber;
+    
+    public Wall(Vector2 pos, int level, int doorNumber)
     {
+        this.doorNumber = doorNumber;
         this.SetPosition(pos);
         this.level = level;
         sprite = new FAnimatedSprite("door" + level.ToString());
         sprite.addAnimation(new FAnimation("normal", new int[] { 1 }, 100));
         sprite.addAnimation(new FAnimation("broken", new int[] { 2 }, 100));
         this.AddChild(sprite);
+        
     }
 
     protected override void Update()
@@ -36,19 +40,34 @@ public class Wall : BaseGameObject
                     this.takeDamage((world.p.drillLevel >= this.level) ? world.p.damage : 0);
 
                 }
+                if (playerRelativePos.x > -sprite.width / 2 &&
+                    playerRelativePos.x < sprite.width / 2 &&
+                    playerRelativePos.y > -sprite.height / 2 &&
+                    playerRelativePos.y < sprite.height / 2)
+                {
+                  
+                    if (playerRelativePos.x > 0)
+                        world.p.x = this.x - sprite.width/2;
+                    else
+                        world.p.x = this.x + sprite.width/2;
+                    
+                }
+                
             }
         }
         base.Update();
     }
     public void breakDoor()
     {
+        RXDebug.Log("HI");
         isBroken = true;
         sprite.play("broken");
     }
     protected override void die()
     {
+        C.doorsBroken.Add(new KeyValuePair<string, int>(world.map.mapName, doorNumber));
         //Particles
-        sprite.play("broken");
+        breakDoor();
     }
 }
 

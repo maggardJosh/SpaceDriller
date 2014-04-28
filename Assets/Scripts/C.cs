@@ -18,6 +18,8 @@ public static class C
 
     public const float PIOVER180 = Mathf.PI / 180.0f;
     public const float PIOVER180_INV = 180.0f / Mathf.PI;
+    public static List<KeyValuePair<string, int>> doorsBroken = new List<KeyValuePair<string, int>>();
+    //Map name and index of door that was broken
 
     private static FCamObject camera;
     public static FCamObject getCameraInstance()

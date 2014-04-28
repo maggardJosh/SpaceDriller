@@ -147,6 +147,7 @@ public class World : FContainer
     {
         pickups.Clear();
         enemies.Clear();
+        int doorNumber = 1;
         foreach (XMLNode node in map.objects)
         {
             if (node.attributes.ContainsKey("gid"))
@@ -172,7 +173,7 @@ public class World : FContainer
                         addTiki(node);
                         break;
                     case 6:
-                        addWall(node, 1);
+                        addWall(node, 1, doorNumber++);
                         break;
                     case 7:
                         addDrill(node, 2);
@@ -181,7 +182,11 @@ public class World : FContainer
                         addDrill(node, 3);
                         break;
                     case 9:
-                        addWall(node, 2);
+                        addWall(node, 2, doorNumber++);
+                        break;
+                    case 10:
+                        addWall(node, 3, doorNumber++);
+                        break;
                     case 11:
                         addSpaceGhost(node, 3);
                         break;
@@ -226,7 +231,7 @@ public class World : FContainer
 
     private void addJumpBoots(XMLNode node)
     {
-        if (p.maxJumpsLeft == 1)
+        if (p == null || p.maxJumpsLeft == 1)
         {
             JumpBoots boot = new JumpBoots(new Vector2(int.Parse(node.attributes["x"]) + map.tileWidth / 2, -int.Parse(node.attributes["y"]) + map.tileHeight / 2));
             pickups.Add(boot);
@@ -236,7 +241,7 @@ public class World : FContainer
 
     private void addDrill(XMLNode node, int level)
     {
-        
+
         if (p == null || p.drillLevel < level)
         {
             DrillPowerUp drill = new DrillPowerUp(new Vector2(int.Parse(node.attributes["x"]) + map.tileWidth / 2, -int.Parse(node.attributes["y"]) + map.tileHeight / 2), level);
@@ -253,9 +258,15 @@ public class World : FContainer
         playerLayer.AddChild(ghost);
     }
 
-    private void addWall(XMLNode node, int level)
+    private void addWall(XMLNode node, int level, int doorNumber)
     {
-        Wall wall = new Wall(new Vector2(int.Parse(node.attributes["x"]) + map.tileWidth / 2, -int.Parse(node.attributes["y"]) + map.tileHeight), level);
+        Wall wall = new Wall(new Vector2(int.Parse(node.attributes["x"]) + map.tileWidth / 2, -int.Parse(node.attributes["y"]) + map.tileHeight), level, doorNumber);
+        foreach (KeyValuePair<string, int> pair in C.doorsBroken)
+        {
+            if (pair.Key.CompareTo(this.map.mapName) == 0)
+                if (pair.Value == doorNumber)
+                    wall.breakDoor();
+        }
         wall.setWorld(this);
         enemies.Add(wall);
         playerLayer.AddChild(wall);
@@ -270,7 +281,7 @@ public class World : FContainer
                 foreach (XMLNode property in nodeChild.children)
                     if (property.attributes["name"].ToLower().CompareTo("numTikis") == 0)
                         numTikis = int.Parse(property.attributes["value"]);
-                
+
         Tiki tiki = new Tiki(new Vector2(int.Parse(node.attributes["x"]) + map.tileWidth / 2, -int.Parse(node.attributes["y"]) + map.tileHeight / 2), numTikis);
         tiki.setWorld(this);
         enemies.Add(tiki);

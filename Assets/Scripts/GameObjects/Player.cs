@@ -51,7 +51,7 @@ public class Player : BaseGameObject
     float gravity = -28;
     float maxYVel = -14;
     bool grounded = false;
-    float jumpForce = 8;
+    float jumpForce = 6;
 
     int animSpeed = 100;
     bool forceBounce = false;
@@ -180,6 +180,8 @@ public class Player : BaseGameObject
                 break;
         }
     }
+
+    float deltaTime = 0;
     float deathCount = 0;
     float deathTime = 2.0f;
     protected override void Update()
@@ -224,162 +226,170 @@ public class Player : BaseGameObject
         float xMove = 0;
         float yMove = 0;
 
-        yVel += gravity * UnityEngine.Time.deltaTime;
-        if (stunCount <= 0)
+        deltaTime += UnityEngine.Time.deltaTime;
+         if (Input.GetKeyDown(jumpKey))            //Space has been pressed. Start jumping
+                {
+                    if (jumpsLeft > 0)
+                    {
+                        jumpsLeft--;
+                        yVel = jumpForce;
+                        FSoundManager.PlaySound("jump");
+                    }
+
+                }
+        float step = .016f;
+        while (deltaTime > 0)
         {
-
-            if (Input.GetKeyDown(jumpKey))            //Space has been pressed. Start jumping
-            {
-                if (jumpsLeft > 0)
-                {
-                    jumpsLeft--;
-                    yVel = jumpForce;
-                    FSoundManager.PlaySound("jump");
-                }
-
-            }
-            else if (!Input.GetKey(jumpKey))       //Space is not held down... Let the player stop jumping if currently jumping
-            {
-                if (!forceBounce && yVel > 0)
-                    yVel *= .4f;
-            }
-            if (yVel > 0)
-                currentAnimState = AnimState.JUMP;
-            else
-            {
-                forceBounce = false;
-                if (yVel < 0 && !grounded)
-                {
-                    currentAnimState = AnimState.FALL;
-
-                }
-            }
-            if (Input.GetKey(leftKey))
-            {
-                xMove = -Time.deltaTime * speed;
-                isFacingLeft = true;
-            }
-            else
-                if (Input.GetKey(rightKey))
-                {
-                    xMove = Time.deltaTime * speed;
-                    isFacingLeft = false;
-                }
-            if (grounded)
-                currentAnimState = AnimState.IDLE;
-            if (currentAnimState == AnimState.IDLE && xMove != 0)
-                currentAnimState = AnimState.RUN;
-            if (Input.GetKey(KeyCode.W))
-                drillingDirection = 0;
-            else if (Input.GetKey(KeyCode.D))
-                drillingDirection = 1;
-            else if (Input.GetKey(KeyCode.S))
-                drillingDirection = 2;
-            else if (Input.GetKey(KeyCode.A))
-                drillingDirection = 3;
-            else
-                drillingDirection = -1;
-            if (Input.GetKey(downKey))
-            {
-                if (currentAnimState == AnimState.JUMP || currentAnimState == AnimState.FALL)
-                    currentAnimState = AnimState.FALL_ATTACK_DOWN;
-            }
-            if (Input.GetKey(upKey))
-            {
-
-                if (currentAnimState == AnimState.IDLE)
-                    currentAnimState = AnimState.IDLE_ATTACK_UP;
-                else if (currentAnimState == AnimState.RUN)
-                    currentAnimState = AnimState.RUN_ATTACK_UP;
-                else if (currentAnimState == AnimState.JUMP)
-                    currentAnimState = AnimState.JUMP_ATTACK_UP;
-                else if (currentAnimState == AnimState.FALL)
-                    currentAnimState = AnimState.FALL_ATTACK_UP;
-            }
-            if (isAttackDown() && !isOverheated)
-            {
-                if (!drillSoundSource.isPlaying || drillSoundSource.clip != drillSoundClip)
-                {
-                    drillSoundSource.clip = drillSoundClip;
-                    drillSoundSource.Play();
-                }
-                spawnSparks();
-                overheat += UnityEngine.Time.deltaTime * .25f;
-                if (overheat >= 1)
-                {
-                    overheat = 1;
-                    isOverheated = true;
-                }
-            }
-            else if (isOverheated)
-            {
-                if (!drillSoundSource.isPlaying || drillSoundSource.clip != drillOverheatClip)
-                {
-                    drillSoundSource.clip = drillOverheatClip;
-                    drillSoundSource.Play();
-                }
-                overheat -= UnityEngine.Time.deltaTime * .5f;
-                if (overheat <= 0)
-                {
-                    isOverheated = false;
-                }
-            }
-            else if (!isAttackDown())
-            {
-                if (drillSoundSource.isPlaying)
-                    drillSoundSource.Pause();
-                if (overheat > 0)
-                    overheat -= UnityEngine.Time.deltaTime * .5f;
-                else
-                    overheat = 0;
-            }
-            overheatBar.setIsOverheated(isOverheated);
-            overheatBar.setOverheat(overheat);
-        }
-        else
-        {
-            drillSoundSource.Pause();
-            if (xVel == 0)
-                stunCount -= UnityEngine.Time.deltaTime;
-
-            if (yVel < 0)
-            {
-                if (health <= 0)
-                {
-                    C.transitioning = true;
-                    deathCount = 0;
-                }
-            }
-
+            deltaTime -= step;
+            yVel += gravity * step;
             if (stunCount <= 0)
-                invulnerableCount = C.stunInvulnTime;       //Done being stunned now have control and be invulnerable
+            {
+
+               
+                if (!Input.GetKey(jumpKey))       //Space is not held down... Let the player stop jumping if currently jumping
+                {
+                    if (!forceBounce && yVel > 0)
+                        yVel *= .4f;
+                }
+                if (yVel > 0)
+                    currentAnimState = AnimState.JUMP;
+                else
+                {
+                    forceBounce = false;
+                    if (yVel < 0 && !grounded)
+                    {
+                        currentAnimState = AnimState.FALL;
+
+                    }
+                }
+                if (Input.GetKey(leftKey))
+                {
+                    xMove = -step * speed;
+                    isFacingLeft = true;
+                }
+                else
+                    if (Input.GetKey(rightKey))
+                    {
+                        xMove = step * speed;
+                        isFacingLeft = false;
+                    }
+                if (grounded)
+                    currentAnimState = AnimState.IDLE;
+                if (currentAnimState == AnimState.IDLE && xMove != 0)
+                    currentAnimState = AnimState.RUN;
+                if (Input.GetKey(KeyCode.W))
+                    drillingDirection = 0;
+                else if (Input.GetKey(KeyCode.D))
+                    drillingDirection = 1;
+                else if (Input.GetKey(KeyCode.S))
+                    drillingDirection = 2;
+                else if (Input.GetKey(KeyCode.A))
+                    drillingDirection = 3;
+                else
+                    drillingDirection = -1;
+                if (Input.GetKey(downKey))
+                {
+                    if (currentAnimState == AnimState.JUMP || currentAnimState == AnimState.FALL)
+                        currentAnimState = AnimState.FALL_ATTACK_DOWN;
+                }
+                if (Input.GetKey(upKey))
+                {
+
+                    if (currentAnimState == AnimState.IDLE)
+                        currentAnimState = AnimState.IDLE_ATTACK_UP;
+                    else if (currentAnimState == AnimState.RUN)
+                        currentAnimState = AnimState.RUN_ATTACK_UP;
+                    else if (currentAnimState == AnimState.JUMP)
+                        currentAnimState = AnimState.JUMP_ATTACK_UP;
+                    else if (currentAnimState == AnimState.FALL)
+                        currentAnimState = AnimState.FALL_ATTACK_UP;
+                }
+                if (isAttackDown() && !isOverheated)
+                {
+                    if (!drillSoundSource.isPlaying || drillSoundSource.clip != drillSoundClip)
+                    {
+                        drillSoundSource.clip = drillSoundClip;
+                        drillSoundSource.Play();
+                    }
+                    spawnSparks();
+                    overheat += step * .25f;
+                    if (overheat >= 1)
+                    {
+                        overheat = 1;
+                        isOverheated = true;
+                    }
+                }
+                else if (isOverheated)
+                {
+                    if (!drillSoundSource.isPlaying || drillSoundSource.clip != drillOverheatClip)
+                    {
+                        drillSoundSource.clip = drillOverheatClip;
+                        drillSoundSource.Play();
+                    }
+                    overheat -= step * .5f;
+                    if (overheat <= 0)
+                    {
+                        isOverheated = false;
+                    }
+                }
+                else if (!isAttackDown())
+                {
+                    if (drillSoundSource.isPlaying)
+                        drillSoundSource.Pause();
+                    if (overheat > 0)
+                        overheat -= step * .5f;
+                    else
+                        overheat = 0;
+                }
+                overheatBar.setIsOverheated(isOverheated);
+                overheatBar.setOverheat(overheat);
+            }
+            else
+            {
+                drillSoundSource.Pause();
+                if (xVel == 0)
+                    stunCount -= step;
+
+                if (yVel < 0)
+                {
+                    if (health <= 0)
+                    {
+                        C.transitioning = true;
+                        deathCount = 0;
+                    }
+                }
+
+                if (stunCount <= 0)
+                    invulnerableCount = C.stunInvulnTime;       //Done being stunned now have control and be invulnerable
+            }
+            yVel = Mathf.Clamp(yVel, maxYVel, jumpForce);
+            if (xVel != 0)
+                xMove = xVel;
+
+            yMove = yVel;
+
+
+            if (yVel > 0)
+                grounded = false;
+            tryMove(xMove, yMove);
+
+            if (stunCount > 0)
+            {
+                sprite.alpha = .5f;
+                sprite.play((isFacingLeft ? "left" : "right") + "stun");
+            }
+            else
+            {
+                sprite.alpha = 1;
+                sprite.play(((isAttackDown() && !isOverheated) ? "drill" : "") + (isFacingLeft ? "left" : "right") + currentAnimState);
+            }
+            if (invulnerableCount > 0)
+            {
+                invulnerableCount -= step;
+                sprite.alpha = ((invulnerableCount * 1000) % 10 < 5) ? 0 : 1;
+            }
+
         }
-        yVel = Mathf.Clamp(yVel, maxYVel, jumpForce);
-        if (xVel != 0)
-            xMove = xVel;
-
-        yMove = yVel;
-
-
-        this.grounded = false;
-        tryMove(xMove, yMove);
-
-        if (stunCount > 0)
-        {
-            sprite.alpha = .5f;
-            sprite.play((isFacingLeft ? "left" : "right") + "stun");
-        }
-        else
-        {
-            sprite.alpha = 1;
-            sprite.play(((isAttackDown() && !isOverheated) ? "drill" : "") + (isFacingLeft ? "left" : "right") + currentAnimState);
-        }
-        if (invulnerableCount > 0)
-        {
-            invulnerableCount -= UnityEngine.Time.deltaTime;
-            sprite.alpha = ((invulnerableCount * 1000) % 10 < 5) ? 0 : 1;
-        }
-
         sparkParticleSystem.x = -x;
         sparkParticleSystem.y = -y;
 

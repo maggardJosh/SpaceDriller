@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using UnityEngine;
 
 public class BaseGameObject : FContainer
 {
@@ -41,16 +42,20 @@ public class BaseGameObject : FContainer
         this.world = world;
     }
 
-    protected void takeDamage(int damageAmount)
+    protected void takeDamage(int damageAmount, Vector2 position)
     {
         this.health -= damageAmount;
         lastDamageCounter = 0;
         for (int i = 0; i < damageAmount; i++)
-            Futile.stage.AddChild(new DamageIndicator(this.GetPosition() ));
+            Futile.stage.AddChild(new DamageIndicator(position ));
         if (damageAmount == 0)
-            Futile.stage.AddChild(new DamageIndicator(this.GetPosition(), false));
+            Futile.stage.AddChild(new DamageIndicator(position, false));
         if (this.health <= 0)
             this.die();
+    }
+    protected void takeDamage(int damageAmount)
+    {
+        this.takeDamage(damageAmount, this.GetPosition());
     }
 
     protected void die()

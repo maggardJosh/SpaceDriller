@@ -161,6 +161,9 @@ public class World : FContainer
                     case 4:
                         addSpaceGhost(node);
                         break;
+                    case 5:
+                        addTiki(node);
+                        break;
                 }
             }
             else
@@ -216,6 +219,21 @@ public class World : FContainer
         ghost.setWorld(this);
         enemies.Add(ghost);
         playerLayer.AddChild(ghost);
+    }
+
+    private void addTiki(XMLNode node)
+    {
+        int numTikis = 3;
+        foreach (XMLNode nodeChild in node.children)
+            if (nodeChild.tagName.CompareTo("Properties") == 0)
+                foreach (XMLNode property in nodeChild.children)
+                    if (property.attributes["name"].ToLower().CompareTo("numTikis") == 0)
+                        numTikis = int.Parse(property.attributes["value"]);
+                
+        Tiki tiki = new Tiki(new Vector2(int.Parse(node.attributes["x"]) + map.tileWidth / 2, -int.Parse(node.attributes["y"]) + map.tileHeight / 2), numTikis);
+        tiki.setWorld(this);
+        enemies.Add(tiki);
+        playerLayer.AddChild(tiki);
     }
 
     public void spawnPlayer(Player p, String toDoor)

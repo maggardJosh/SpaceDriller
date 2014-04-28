@@ -57,8 +57,8 @@ public class Player : BaseGameObject
     int jumpsLeft = 1;
     public int maxJumpsLeft = 1;       // 2 = double jump
 
-    float collisionWidth = 20;
-    float collisionHeight = 25;
+    public float collisionWidth = 20;
+    public float collisionHeight = 25;
 
     int drillingDirection = -1;         //Drill direction -1 = none, 0 = up, 1 = right, 2 = down, 3 = left
 

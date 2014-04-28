@@ -11,6 +11,7 @@ public class World : FContainer
 
     List<Vector2> spawnPoints = new List<Vector2>();
     List<Door> doorList = new List<Door>();
+    List<TutorialText> tutorialList = new List<TutorialText>();
     List<CheckPoint> checkPointList = new List<CheckPoint>();
     List<BaseGameObject> enemies = new List<BaseGameObject>();
     List<Pickup> pickups = new List<Pickup>();
@@ -59,6 +60,7 @@ public class World : FContainer
         foregroundLayer = new FContainer();
 
         doorList = new List<Door>();
+        tutorialList = new List<TutorialText>();
 
         map = new FTmxMap();
         FCamObject camera = C.getCameraInstance();
@@ -138,7 +140,7 @@ public class World : FContainer
                 p.setDrillPower(C.lastSave.drillLevel);
                 p.maxJumpsLeft = C.lastSave.jumpBoots ? 2 : 1;
                 C.doorsBroken = new List<KeyValuePair<string, int>>(C.lastSave.openedDoors.AsEnumerable());
-                
+
                 this.RemoveAllChildren();
                 loadMap(C.lastSave.mapName);
                 if (checkPointList.Count > 0)
@@ -170,6 +172,8 @@ public class World : FContainer
         foreach (CheckPoint checkPoint in checkPointList)
             checkPoint.checkPlayer(p);
 
+        foreach (TutorialText tutText in tutorialList)
+            tutText.checkPlayer(p);
 
         for (int i = 0; i < enemies.Count; i++)
         {
@@ -264,6 +268,27 @@ public class World : FContainer
                                 toDoor = property.attributes["value"];
                     }
                     doorList.Add(new Door(pos, width, height, node.attributes["name"], toMap, toDoor));
+                }
+                else
+                {
+                    if (node.attributes["type"].ToLower().CompareTo("tutorial") == 0)
+                    {
+                        //Tutorial text box
+                        Vector2 pos = new Vector2(float.Parse(node.attributes["x"]), float.Parse(node.attributes["y"]));
+                        float width = float.Parse(node.attributes["width"]);
+                        float height = float.Parse(node.attributes["height"]);
+                        string tutText = "";
+                        foreach (XMLNode child in node.children)
+                            if (child.tagName.CompareTo("properties") == 0)
+                                foreach (XMLNode property in child.children)
+                                {
+                                    if (property.attributes["name"].ToLower().CompareTo("text") == 0)
+                                        tutText = property.attributes["value"];
+                                    
+                                }
+
+                        tutorialList.Add(new TutorialText(pos, width, height, tutText));
+                    }
                 }
         }
     }

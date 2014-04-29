@@ -144,8 +144,6 @@ public class Player : BaseGameObject
 
         sprite.addAnimation(new FAnimation("recharge", new int[] { 77, 17 }, animSpeed / 5, true));
 
-        setDrillPower(3);
-        maxJumpsLeft = 2;
         sprite.play("leftIDLE");
         this.AddChild(sprite);
         this.AddChild(sparkParticleSystem);

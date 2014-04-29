@@ -20,7 +20,7 @@ public class SpaceGhost : BaseGameObject
     Vector2 originalPos;
     int animSpeed = 100;
     Vector2 knockBackVel;
-    float chaseSpeed = 40;
+    float chaseSpeed = 60;
     float knockBackCount = 0;
     float knockBackCountDelay = .3f;
     int tilesAwayTakeNotice = 10;
@@ -132,7 +132,7 @@ public class SpaceGhost : BaseGameObject
 
         if (playerRelativePos.sqrMagnitude < (sprite.width * sprite.width))
         {
-            if (world.p.isAttackingDown() && world.p.yVel < 0 && world.p.y > this.y && world.p.x < this.x + Mathf.Abs(sprite.width) / 2 && world.p.x > this.x - Mathf.Abs(sprite.width) / 2)
+            if (world.p.isAttackingDown() && (world.p.yVel < 0 || world.p.drillLevel == 3) && world.p.y > this.y && world.p.x < this.x + Mathf.Abs(sprite.width) / 2 && world.p.x > this.x - Mathf.Abs(sprite.width) / 2)
             {
                 world.p.bounce();
                 if (this.lastDamageCounter > world.p.weaponDamageRate)

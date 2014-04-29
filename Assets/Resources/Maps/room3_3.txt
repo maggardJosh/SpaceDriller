@@ -174,5 +174,28 @@
   <object gid="150" x="1600" y="704"/>
   <object gid="150" x="1696" y="704"/>
   <object gid="150" x="576" y="672"/>
+  <object gid="156" x="992" y="320"/>
+  <object gid="156" x="896" y="320"/>
+  <object gid="156" x="928" y="320"/>
+  <object gid="156" x="960" y="320"/>
+  <object gid="156" x="1056" y="320"/>
+  <object gid="156" x="1152" y="288"/>
+  <object gid="156" x="1152" y="288"/>
+  <object gid="156" x="1248" y="320"/>
+  <object gid="156" x="1312" y="288"/>
+  <object gid="156" x="1344" y="288"/>
+  <object gid="156" x="1440" y="320"/>
+  <object gid="156" x="1472" y="320"/>
+  <object gid="156" x="1504" y="288"/>
+  <object gid="156" x="1568" y="320"/>
+  <object gid="156" x="1600" y="320"/>
+  <object gid="156" x="1664" y="256"/>
+  <object gid="156" x="1696" y="288"/>
+  <object gid="156" x="1664" y="352"/>
+  <object gid="156" x="800" y="320"/>
+  <object gid="156" x="864" y="352"/>
+  <object gid="156" x="864" y="384"/>
+  <object gid="156" x="992" y="352"/>
+  <object gid="156" x="1056" y="352"/>
  </objectgroup>
 </map>

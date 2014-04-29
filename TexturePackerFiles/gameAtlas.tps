@@ -190,7 +190,6 @@
             <filename>doors</filename>
             <filename>doorParticles</filename>
             <filename>titleLabel.png</filename>
-            <filename>titlePressSpace.png</filename>
             <filename>title.png</filename>
         </array>
         <key>ignoreFileList</key>

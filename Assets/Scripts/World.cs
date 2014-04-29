@@ -98,6 +98,13 @@ public class World : FContainer
                 C.getCameraInstance().MoveToFront();
                 Go.to(whiteOverlaySprite, C.transitioningTime, new TweenConfig().floatProp("alpha", 1.0f).setEaseType(EaseType.QuadOut).onComplete((AbstractTween t) =>
                 {
+                    if (door.toMap.CompareTo("end") == 0)
+                    {
+                        this.RemoveFromContainer();
+                        C.getCameraInstance().RemoveAllChildren();
+                        FPageManager.getInstance().transitionOn(new MainMenuPage());
+                        return;
+                    }
                     this.RemoveAllChildren();
                     loadMap(door.toMap);
                     spawnPlayer(p, door.toDoor);

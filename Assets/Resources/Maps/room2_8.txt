@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <map version="1.0" orientation="orthogonal" width="60" height="20" tilewidth="32" tileheight="32">
  <properties>
-  <property name="MapName" value="The Cave"/>
+  <property name="MapName" value="Evacuation Tunnel 02"/>
  </properties>
  <tileset firstgid="1" name="tilemap" tilewidth="32" tileheight="32">
   <image source="gfx/tileset.png" width="384" height="384"/>

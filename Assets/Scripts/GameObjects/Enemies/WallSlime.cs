@@ -162,7 +162,7 @@ public class WallSlime : BaseGameObject
         Vector2 playerRelativePos = this.GetPosition() - world.p.GetPosition();
         if (playerRelativePos.sqrMagnitude < (sprite.width * sprite.width))
         {
-            if (world.p.isAttackingDown() && world.p.yVel < 0 && world.p.y > this.y && world.p.x < this.x + sprite.width / 2 && world.p.x > this.x - sprite.width / 2)
+            if (world.p.isAttackingDown() && (world.p.yVel < 0 || world.p.drillLevel == 3) && world.p.y > this.y && world.p.x < this.x + sprite.width / 2 && world.p.x > this.x - sprite.width / 2)
             {
                 world.p.bounce();
                 if (this.lastDamageCounter > world.p.weaponDamageRate)

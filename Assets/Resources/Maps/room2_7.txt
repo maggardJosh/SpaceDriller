@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <map version="1.0" orientation="orthogonal" width="16" height="10" tilewidth="32" tileheight="32">
  <properties>
-  <property name="MapName" value="The Cave"/>
+  <property name="MapName" value="Secondary Storage"/>
  </properties>
  <tileset firstgid="1" name="tilemap" tilewidth="32" tileheight="32">
   <image source="gfx/tileset.png" width="384" height="384"/>
@@ -12,7 +12,7 @@
  <tileset firstgid="146" name="objects" tilewidth="32" tileheight="32">
   <image source="gfx/objects.png" width="384" height="32"/>
  </tileset>
- <layer name="BG" width="16" height="10">
+ <layer name="BG" width="16" height="10" visible="0">
   <data encoding="csv">
 99,137,116,109,113,127,90,137,95,134,113,114,113,137,106,127,
 112,143,123,110,94,106,113,107,123,139,123,142,121,134,94,137,
@@ -29,18 +29,18 @@
  <layer name="FG" width="16" height="10">
   <data encoding="csv">
 46,31,33,44,36,23,20,34,22,21,32,31,36,35,43,22,
-21,31,47,144,144,47,33,144,144,144,144,144,32,35,48,23,
-44,19,144,144,144,144,144,144,144,144,144,144,144,44,23,70,
-23,144,144,144,144,144,144,144,144,144,144,144,144,23,43,23,
-21,144,144,144,144,144,144,144,144,144,144,144,144,32,45,23,
-24,144,144,144,144,144,144,144,144,144,144,144,144,32,34,34,
-35,144,144,144,144,144,144,144,144,144,144,144,144,35,21,33,
-21,144,144,144,144,144,144,144,144,144,144,144,144,144,46,59,
-43,10,144,144,144,144,144,144,144,144,144,144,144,144,22,58,
+21,31,47,26,25,47,33,26,17,18,29,25,32,35,48,23,
+44,19,26,144,144,17,18,144,144,144,144,144,25,44,23,70,
+23,26,144,144,144,144,144,144,144,144,144,144,15,23,43,23,
+21,16,144,144,144,144,144,144,144,144,144,144,27,32,45,23,
+24,28,144,144,144,144,144,144,144,144,144,144,15,32,34,34,
+35,16,144,144,144,144,144,144,144,144,144,144,15,35,21,33,
+21,14,144,144,144,144,144,144,144,144,144,144,144,25,46,59,
+43,10,14,52,40,40,42,54,50,37,54,51,52,13,22,58,
 19,24,10,7,6,11,8,9,8,12,6,11,8,8,43,70
 </data>
  </layer>
- <layer name="Collision" width="16" height="10">
+ <layer name="Collision" width="16" height="10" visible="0">
   <properties>
    <property name="draw" value="false"/>
   </properties>
@@ -57,7 +57,7 @@
 0,145,145,145,145,145,145,145,145,145,145,145,145,145,145,145
 </data>
  </layer>
- <objectgroup name="Doors" width="16" height="10">
+ <objectgroup name="Doors" width="16" height="10" visible="0">
   <object name="rightDoor" type="Door" x="448" y="224" width="32" height="64">
    <properties>
     <property name="toDoor" value="leftDoor"/>
@@ -65,7 +65,7 @@
    </properties>
   </object>
  </objectgroup>
- <objectgroup name="Enemies" width="16" height="10">
+ <objectgroup name="Enemies" width="16" height="10" visible="0">
   <object gid="146" x="64" y="288"/>
   <object gid="146" x="64" y="224"/>
   <object gid="146" x="64" y="160"/>
@@ -80,7 +80,7 @@
   <object gid="146" x="416" y="128"/>
   <object gid="146" x="416" y="160"/>
  </objectgroup>
- <objectgroup name="Objects" width="16" height="10">
+ <objectgroup name="Objects" width="16" height="10" visible="0">
   <object gid="153" x="160" y="288"/>
  </objectgroup>
 </map>

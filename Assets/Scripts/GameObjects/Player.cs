@@ -88,7 +88,7 @@ public class Player : BaseGameObject
         drillSoundSource.clip = drillSoundClip;
 
 
-        health = 1;
+        health = 8;
         sparkParticleSystem = new FParticleSystem(100);
         sparkParticleDefinition = new FParticleDefinition(C.whiteElement);
         sparkParticleDefinition.startColor = Color.yellow;
@@ -144,6 +144,8 @@ public class Player : BaseGameObject
 
         sprite.addAnimation(new FAnimation("recharge", new int[] { 77, 17 }, animSpeed / 5, true));
 
+        setDrillPower(3);
+        maxJumpsLeft = 2;
         sprite.play("leftIDLE");
         this.AddChild(sprite);
         this.AddChild(sparkParticleSystem);
@@ -227,16 +229,16 @@ public class Player : BaseGameObject
         float yMove = 0;
 
         deltaTime += UnityEngine.Time.deltaTime;
-         if (Input.GetKeyDown(jumpKey))            //Space has been pressed. Start jumping
-                {
-                    if (jumpsLeft > 0)
-                    {
-                        jumpsLeft--;
-                        yVel = jumpForce;
-                        FSoundManager.PlaySound("jump");
-                    }
+        if (Input.GetKeyDown(jumpKey))            //Space has been pressed. Start jumping
+        {
+            if (jumpsLeft > 0)
+            {
+                jumpsLeft--;
+                yVel = jumpForce;
+                FSoundManager.PlaySound("jump");
+            }
 
-                }
+        }
         float step = .016f;
         while (deltaTime > 0)
         {
@@ -245,7 +247,7 @@ public class Player : BaseGameObject
             if (stunCount <= 0)
             {
 
-               
+
                 if (!Input.GetKey(jumpKey))       //Space is not held down... Let the player stop jumping if currently jumping
                 {
                     if (!forceBounce && yVel > 0)
@@ -256,7 +258,7 @@ public class Player : BaseGameObject
                 else
                 {
                     forceBounce = false;
-                    if (yVel < 0 && !grounded)
+                    if (yVel < 0)
                     {
                         currentAnimState = AnimState.FALL;
 
@@ -277,16 +279,7 @@ public class Player : BaseGameObject
                     currentAnimState = AnimState.IDLE;
                 if (currentAnimState == AnimState.IDLE && xMove != 0)
                     currentAnimState = AnimState.RUN;
-                if (Input.GetKey(KeyCode.W))
-                    drillingDirection = 0;
-                else if (Input.GetKey(KeyCode.D))
-                    drillingDirection = 1;
-                else if (Input.GetKey(KeyCode.S))
-                    drillingDirection = 2;
-                else if (Input.GetKey(KeyCode.A))
-                    drillingDirection = 3;
-                else
-                    drillingDirection = -1;
+
                 if (Input.GetKey(downKey))
                 {
                     if (currentAnimState == AnimState.JUMP || currentAnimState == AnimState.FALL)
@@ -366,11 +359,15 @@ public class Player : BaseGameObject
             if (xVel != 0)
                 xMove = xVel;
 
+            if (isAttackingDown() && drillLevel == 3)
+                if (yVel < jumpForce * .2f)
+                    yVel += jumpForce * .1f;
+
             yMove = yVel;
 
 
-            if (yVel > 0)
-                grounded = false;
+
+            grounded = false;
             tryMove(xMove, yMove);
 
             if (stunCount > 0)
@@ -578,6 +575,8 @@ public class Player : BaseGameObject
     public void bounce()
     {
         yVel = jumpForce * .8f;
+        if (drillLevel == 3)
+            yVel = jumpForce * .2f;
         forceBounce = true;
 
     }

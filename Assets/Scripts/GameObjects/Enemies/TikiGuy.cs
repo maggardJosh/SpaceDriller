@@ -19,7 +19,7 @@ public class TikiGuy : BaseGameObject
         sprite.addAnimation(new FAnimation("active", new int[] { 5 }, 100, true));
         sprite.addAnimation(new FAnimation("breaking", new int[] { 1, 2, 3, 4 }, 100, false));
         sprite.play("idle");
-        this.health = 40;
+        this.health = 20;
     }
 
     public void goActive()
@@ -95,7 +95,7 @@ public class TikiGuy : BaseGameObject
             playerRelativeToUsPos.y > -sprite.height &&
             playerRelativeToUsPos.y < sprite.height)
         {
-            if (world.p.isAttackingDown() && world.p.yVel < 0 && playerRelativePos.y > this.y && playerRelativePos.x < this.x + sprite.width / 2 && playerRelativePos.x > this.x - sprite.width / 2)
+            if (world.p.isAttackingDown() && (world.p.yVel < 0 || world.p.drillLevel == 3) && playerRelativePos.y > this.y && playerRelativePos.x < this.x + sprite.width / 2 && playerRelativePos.x > this.x - sprite.width / 2)
             {
                 world.p.bounce();
                 if (this.lastDamageCounter > world.p.weaponDamageRate)

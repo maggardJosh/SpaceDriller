@@ -102,7 +102,7 @@ public class World : FContainer
                     {
                         this.RemoveFromContainer();
                         C.getCameraInstance().RemoveAllChildren();
-                        FPageManager.getInstance().transitionOn(new MainMenuPage());
+                        FPageManager.getInstance().transitionOn(new Credits());
                         return;
                     }
                     this.RemoveAllChildren();
